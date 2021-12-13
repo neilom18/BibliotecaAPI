@@ -1,3 +1,4 @@
+using BibliotecaAPI.Manager;
 using BibliotecaAPI.Repositories;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -88,10 +89,20 @@ namespace BibliotecaAPI
             });
 
             services.AddSingleton<UsersRepository>();
-            services.AddSingleton<ClientsRepository>();
+            services.AddSingleton<CustomersRepository>();
+            services.AddSingleton<EmployeerRepository>();
+            services.AddSingleton<AuthorRepository>();
+            services.AddSingleton<BookRepository>(); 
+
+            services.AddSingleton<JWTTokenService>();
 
             services.AddTransient<UserService>();
-            services.AddSingleton<JWTTokenService>();
+            services.AddTransient<CustomerService>();
+            services.AddTransient<EmployeerService>();
+            services.AddTransient<AuthorService>();
+            services.AddTransient<BookService>();
+            services.AddTransient<AddressService>();
+            services.AddTransient<LoginManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

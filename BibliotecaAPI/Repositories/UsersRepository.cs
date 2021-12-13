@@ -1,4 +1,6 @@
-﻿using BibliotecaAPI.Models;
+﻿using BibliotecaAPI.DTOs.ResultDTO;
+using BibliotecaAPI.Models;
+using BibliotecaAPI.Models.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +16,10 @@ namespace BibliotecaAPI.Repositories
             _users = new Dictionary<Guid, User>();
         }
 
-        public IEnumerable<User> Get(int page, int size)
+        public IEnumerable<User> Get(string cpf,int age, string name,int page, int size)
         {
-           return _users.Values.Skip( page == 1 ? 0 : (page - 1) * size).Take(size);
+            var users = _users.Values.Where(u => u.Username == name && u.Age == age && u.CPF == cpf);
+            return users.Skip( page == 1 ? 0 : (page - 1) * size).Take(size);
         }
 
         public User Get(Guid id)
@@ -30,6 +33,11 @@ namespace BibliotecaAPI.Repositories
         public User GetbyUsername(string username)
         {
             return _users.Values.Where(u => u.Username == username).FirstOrDefault();
+        }
+
+        public bool GetbyUsernameBOOL(string username)
+        {
+            return _users.Values.Where(u => u.Username == username).Any();
         }
 
         public User Create(User user)
@@ -46,18 +54,16 @@ namespace BibliotecaAPI.Repositories
             return _users.Remove(id);
         }
 
-        public User Update(Guid id, User user)
+        public void ChangePassword(Guid id, string newPassword)
         {
-            if (_users.TryGetValue(id, out var userToUpdate))
-            {
-                userToUpdate.Role = user.Role;
-                userToUpdate.Username = user.Username;
-                userToUpdate.Password = user.Password;
-
-                return Get(id);
-            }
-
-            throw new Exception("Usuario não encontrado");
+            var user = Get(id);
+            if(_users.TryGetValue(user.Id, out user))
+                user.Password = newPassword;
+        }
+        public User Login(string username, string password)
+        {
+            var user = _users.Values.Where(u => u.Username == username && u.Password == password).SingleOrDefault();
+            return user;
         }
     }
 }

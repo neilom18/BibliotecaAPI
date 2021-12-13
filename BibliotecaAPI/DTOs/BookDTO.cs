@@ -1,11 +1,10 @@
-﻿namespace BibliotecaAPI.Models
+﻿namespace BibliotecaAPI.DTOs
 {
-    public class Book : Base
+    public class BookDTO
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public System.Guid AuthorId { get; set; }
-        public string AuthorName { get; set; }
         public int AmountCopies { get; set; }
         public uint PageNumber { get; set; }
     }

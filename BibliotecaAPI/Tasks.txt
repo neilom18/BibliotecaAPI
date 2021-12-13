@@ -1,0 +1,13 @@
+﻿
+	Cadastrar Funcionario
+	CRUD dos Autores
+
+
+
+
+
+	// --- //
+	Implementar Exceptions em AuthorRepository e CustomerRepository.
+	Trocar campo CPF por Document
+
+	Fazer as validações

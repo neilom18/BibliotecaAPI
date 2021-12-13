@@ -27,6 +27,7 @@ namespace BibliotecaAPI.Services
                     new Claim[]
                 {
                     new Claim(ClaimTypes.Role, user.Role),
+                    new Claim(ClaimTypes.Sid, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(30),

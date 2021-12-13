@@ -1,4 +1,7 @@
 ﻿using BibliotecaAPI.DTOs;
+using BibliotecaAPI.DTOs.Login;
+using BibliotecaAPI.DTOs.ResultDTO;
+using BibliotecaAPI.Manager;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
 using Newtonsoft.Json;
@@ -6,8 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+
 
 namespace BibliotecaAPI.Services
 {
@@ -15,75 +17,102 @@ namespace BibliotecaAPI.Services
     {
         private UsersRepository _usersRepository;
         private JWTTokenService _tokenService;
-        private ClientsRepository _clientsRepository;
+        private LoginManager _loginManager;
 
-        public UserService(UsersRepository repository, JWTTokenService tokenService, ClientsRepository clientsRepository)
+        public UserService(UsersRepository repository,
+            JWTTokenService tokenService,
+            LoginManager loginManager)
         {
             _usersRepository = repository;
             _tokenService = tokenService;
-            _clientsRepository = clientsRepository;
+            _loginManager = loginManager;
         }
 
-        public IEnumerable<UserDTO> Get(int page, int size)
+        public IEnumerable<UserDataDTO> Get(string cpf,int age,string name,int page, int size)
         {
-            var user = _usersRepository.Get(page, size);
+            var user = _usersRepository.Get(cpf,age,name,page, size);
 
             return user.Select(u =>
             {
-                return new UserDTO
+                return new UserDataDTO
                 {
-                    Role = u.Role,
                     Username = u.Username,
+                    Role = u.Role,
+                    Age = u.Age,
+                    CPF = u.CPF,
                 };
             });
         }
 
-        public async Task<UserDTO> CreateAsync(Client client)
+        public UserDataDTO GetCurrentUser(string name)
         {
-            var res = await GetAddressAsync("https://viacep.com.br/ws/" + client.CEP + "/json/", 5); // Tenta pegar o Endereço pelo CEP
-            if (res is null || res.Cep is null)
-                throw new Exception("Não foi possível encontrar esse CEP, passe o endereço no corpo da requisição.");
-            client.Address = res;
-            var userExist = _usersRepository.GetbyUsername(client.User.Username);
-
-
-            if (userExist != null)
-                throw new Exception();
-            
-            var newUser = _usersRepository.Create(client.User); // Salva o Usuario
-
-            _clientsRepository.Create(client); // Salva o Cliente
-
-            return new UserDTO
+            var user = _usersRepository.GetbyUsername(name);
+            return new UserDataDTO
             {
-                Username = newUser.Username,
-                Role = newUser.Role,
+                Username = user.Username,
+                Role = user.Role,
+                Age = user.Age,
+                CPF = user.CPF,
             };
         }
-        static async Task<Address> GetAddressAsync(string url, int retryCount)
+        public UserDataDTO GetById(Guid id)
         {
-            var client = new HttpClient();
-            var response = string.Empty;
-            Address address = null;
-            var retry = false;
-            var retryIndex = 0;
-
-            do
+            var user = _usersRepository.Get(id);
+            return new UserDataDTO
             {
-                Console.WriteLine("Fazendo requisicao {0} de {1}", retryIndex, retryCount);
-                var rs = await client.GetAsync(url);
-                if (!rs.IsSuccessStatusCode)
+                Username = user.Username,
+                Role = user.Role,
+                Age = user.Age,
+                CPF = user.CPF,
+            };
+        }
+
+        public LoginResultDTO Login(string username, string password)
+        {
+            var loginResult = _loginManager.Authentication(username, password);
+            if (loginResult.Error)
+            {
+                return new LoginResultDTO
                 {
-                    retry = true;
-                    retryIndex++;
+                    Sucess = false,
+                    Errors = new string[] { $"Ocorreu um erro ao authenticar {loginResult.Exception.Message}" }
+                };
+            }
+            var token = _tokenService.GenerateToken(loginResult.User);
+
+            return new LoginResultDTO
+            {
+                Sucess = true,
+                Errors = null,
+                UserLogin = new UserLoginResultDTO
+                {
+                    Username = loginResult.User.Username,
+                    Id = loginResult.User.Id,
+                    Token = token,
+                    Role = loginResult.User.Role,
                 }
-                response = await rs.Content.ReadAsStringAsync();
-                address = JsonConvert.DeserializeObject<Address>(response);
-            } while (retry && retryIndex <= retryCount);
-            return address;
+            };
+        }
+
+        public ResetPasswordResultDTO ResetPassword(ResetPasswordDTO resetPassword)
+        {
+            var result = _loginManager.Authentication(resetPassword.Username, resetPassword.OldPassword);
+            if (result.Error)
+            {
+                return new ResetPasswordResultDTO
+                {
+                    Sucess = false,
+                    Errors = new string[] { $" Ocorreu um erro ao trocar a senha: {result.Exception.Message} "}
+                };
+            }
+
+            _usersRepository.ChangePassword(result.User.Id, resetPassword.NewPassword);
+
+            return new ResetPasswordResultDTO
+            {
+                Sucess = true,
+                Errors=null,
+            };
         }
     }
-
-
-    
 }
