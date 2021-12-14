@@ -1,0 +1,10 @@
+﻿
+	Finalize da Reserva
+	Withdraw
+
+	// --- //
+	Implementar as Exceptions.
+	Trocar campo CPF por Document
+
+	Implementar as regras de negocio que falta (4 a 9)
+	Fazer as validações

@@ -1,6 +1,9 @@
-﻿using BibliotecaAPI.Models;
+﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
+using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
 using System;
+using System.Collections.Generic;
 
 namespace BibliotecaAPI.Services
 {
@@ -25,9 +28,24 @@ namespace BibliotecaAPI.Services
             return _repository.Register(book);
         }
 
+        public Book GetBook(Guid id)
+        {
+            return _repository.Get(id);
+        }
+        
+        public IEnumerable<Book> GetBooks(BookQuery parameters)
+        {
+            return _repository.Get(parameters);
+        }
+
         public Book UpdateBook(Book book, Guid id) 
         {
             return _repository.Update(book, id);
+        }
+
+        public bool DeleteBook(Guid id)
+        {
+            return _repository.Delete(id);
         }
     }
 }

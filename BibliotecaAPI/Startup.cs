@@ -93,6 +93,7 @@ namespace BibliotecaAPI
             services.AddSingleton<EmployeerRepository>();
             services.AddSingleton<AuthorRepository>();
             services.AddSingleton<BookRepository>(); 
+            services.AddSingleton<ReservationRepository>();
 
             services.AddSingleton<JWTTokenService>();
 
@@ -101,6 +102,7 @@ namespace BibliotecaAPI
             services.AddTransient<EmployeerService>();
             services.AddTransient<AuthorService>();
             services.AddTransient<BookService>();
+            services.AddTransient<ReservationService>();
             services.AddTransient<AddressService>();
             services.AddTransient<LoginManager>();
         }

@@ -12,6 +12,5 @@ namespace BibliotecaAPI.Models
         public int FailedAttempts { get; set; } = 0;
         public bool IsLockout { get; set; } = false;
         public DateTime? LockoutDate { get; set; }
-
     }
 }

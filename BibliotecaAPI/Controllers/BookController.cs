@@ -1,8 +1,10 @@
 ﻿using BibliotecaAPI.DTOs;
+using BibliotecaAPI.DTOs.Query;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BibliotecaAPI.Controllers
 {
@@ -26,11 +28,24 @@ namespace BibliotecaAPI.Controllers
                 AmountCopies = bookDTO.AmountCopies,
                 PageNumber = bookDTO.PageNumber,
                 AuthorId = bookDTO.AuthorId,
+                ReleaseYear = bookDTO.ReleaseYear.Date,
             }));
         }
 
+        [HttpGet, AllowAnonymous, Route("{id}")]
+        public IActionResult GetBook(Guid id)
+        {
+            return Ok(_bookService.GetBook(id));
+        }
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult GetBook([FromQuery]BookQuery parameters)
+        {
+            return Ok(_bookService.GetBooks(parameters));
+        }
+
         [HttpPut, AllowAnonymous]
-        public IActionResult PutBook(BookDTO bookDTO, System.Guid id)
+        public IActionResult PutBook(BookDTO bookDTO,Guid id)
         {
             return Ok(_bookService.UpdateBook(new Book 
             {
@@ -40,5 +55,15 @@ namespace BibliotecaAPI.Controllers
                 PageNumber = bookDTO.PageNumber,
             }, id));
         }
+
+        [HttpDelete, AllowAnonymous, Route("{id}")]
+        public IActionResult DeleteBook(Guid id) 
+        {
+            var deleted = _bookService.DeleteBook(id);
+            if (deleted)
+                return Ok();
+            return BadRequest();
+        }
+
     }
 }

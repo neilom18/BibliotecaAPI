@@ -9,10 +9,12 @@ namespace BibliotecaAPI.Repositories
     public class AuthorRepository
     {
         private readonly Dictionary<Guid, Author> _author;
+        private readonly BookRepository _bookRepository;
 
-        public AuthorRepository()
+        public AuthorRepository(BookRepository bookRepository)
         {
             _author = new Dictionary<Guid, Author>();
+            _bookRepository = bookRepository;
         }
 
         public void Register(Author author)
@@ -36,8 +38,8 @@ namespace BibliotecaAPI.Repositories
                                                             
             // Escolher uma das duas formas para padronizar 
 
-            if (_author.TryGetValue(id, out var user))
-                return user;
+            if (_author.TryGetValue(id, out var author))
+                return author;
 
             throw new Exception("Usuario não encontrado");
         }
@@ -71,5 +73,11 @@ namespace BibliotecaAPI.Repositories
             throw new Exception("Usuario não encontrado");
         }
 
+        public void Delete(Guid id)
+        {
+            var author = Get(id);
+            _bookRepository.DeleteAllByAuthor(author.Books);
+            _author.Remove(id);
+        }
     }
 }

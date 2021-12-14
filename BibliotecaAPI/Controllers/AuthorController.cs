@@ -51,5 +51,12 @@ namespace BibliotecaAPI.Controllers
         {
             return Ok(_authorService.Get(parameters));
         }
+
+        [HttpDelete, AllowAnonymous, Route("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            _authorService.Delete(id);
+            return Ok();
+        }
     }
 }

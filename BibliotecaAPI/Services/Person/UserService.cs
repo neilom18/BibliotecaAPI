@@ -94,12 +94,12 @@ namespace BibliotecaAPI.Services
             };
         }
 
-        public ResetPasswordResultDTO ResetPassword(ResetPasswordDTO resetPassword)
+        public ResultDTO ResetPassword(ResetPasswordDTO resetPassword)
         {
             var result = _loginManager.Authentication(resetPassword.Username, resetPassword.OldPassword);
             if (result.Error)
             {
-                return new ResetPasswordResultDTO
+                return new ResultDTO
                 {
                     Sucess = false,
                     Errors = new string[] { $" Ocorreu um erro ao trocar a senha: {result.Exception.Message} "}
@@ -108,7 +108,7 @@ namespace BibliotecaAPI.Services
 
             _usersRepository.ChangePassword(result.User.Id, resetPassword.NewPassword);
 
-            return new ResetPasswordResultDTO
+            return new ResultDTO
             {
                 Sucess = true,
                 Errors=null,

@@ -34,5 +34,10 @@ namespace BibliotecaAPI.Services
         {
             return _repository.Get(parameters);
         }
+
+        public void Delete(Guid id)
+        {
+            _repository.Delete(id);
+        }
     }
 }
