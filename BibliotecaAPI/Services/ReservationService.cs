@@ -20,9 +20,9 @@ namespace BibliotecaAPI.Services
             return _repository.Register(reserve);
         }
 
-        public IEnumerable<Reserve> GetReserves(string username) 
+        public IEnumerable<Reserve> GetReserves(Guid id) 
         {
-            return _repository.GetByUsername(username);
+            return _repository.GetById(id);
         }
 
         public IEnumerable<Reserve> GetReserves(ReserveQuery parameters)
@@ -38,6 +38,11 @@ namespace BibliotecaAPI.Services
         public Reserve Update(Reserve reserve, Guid id)
         {
             return _repository.Update(reserve, id);
+        }
+
+        public Reserve Finalize(Guid id)
+        {
+            return _repository.Finalize(id);
         }
     }
 }

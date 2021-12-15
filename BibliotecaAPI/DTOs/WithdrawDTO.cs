@@ -1,10 +1,21 @@
-﻿namespace BibliotecaAPI.DTOs
-{
-    public class WithdrawDTO
-    {
-        public ReserveDTO Reserve { get; set; }
+﻿using BibliotecaAPI.Models;
+using System;
+using System.Collections.Generic;
 
-        // forma de pagamento
+namespace BibliotecaAPI.DTOs
+{
+    public class WithdrawDTO : Validator
+    {
+        public Guid? ReserveId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public List<Book> Book { get; set; } // Trocar Book por BookDTO
+                                             // e fazer as validações e instanciar por method de extensão
+
+        public override void Validar()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

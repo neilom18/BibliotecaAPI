@@ -1,4 +1,5 @@
 ﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -48,15 +49,18 @@ namespace BibliotecaAPI.Repositories
         {
             IEnumerable<Author> authorFiltered = _author.Values;
 
-            if (parameters.Name != null)
+            /*if (parameters.Name != null)
                 authorFiltered = authorFiltered.Where(a => a.Name == parameters.Name);
             if (parameters.Age != null)
                 authorFiltered = authorFiltered.Where(a => a.Age == parameters.Age);
             if(parameters.Nationality != null)
-                authorFiltered = authorFiltered.Where(a => a.Nationality == parameters.Nationality);
+                authorFiltered = authorFiltered.Where(a => a.Nationality == parameters.Nationality);*/
+
+            authorFiltered.WhereIf(parameters.Name, x => x.Name == parameters.Name)
+                .WhereIf(parameters.Age, x => x.Age == parameters.Age)
+                .WhereIf(parameters.Nationality, x => x.Nationality == parameters.Nationality);
             
-            return authorFiltered.Skip(parameters.Page == 1 ? 0 : (parameters.Page - 1) * parameters.Size)
-                .Take(parameters.Size).ToList();
+            return authorFiltered.Paginaze(parameters.Page, parameters.Size).ToList();
         }
 
         public Author Update(Author author, Guid id)

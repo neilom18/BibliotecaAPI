@@ -19,6 +19,7 @@ namespace BibliotecaAPI.Services
 
             do
             {
+                retry = false;
                 Console.WriteLine("Fazendo requisicao {0} de {1}", retryIndex, retryCount);
                 var rs = await client.GetAsync("https://viacep.com.br/ws/" + cep + "/json");
                 if (!rs.IsSuccessStatusCode)
@@ -26,8 +27,11 @@ namespace BibliotecaAPI.Services
                     retry = true;
                     retryIndex++;
                 }
-                response = await rs.Content.ReadAsStringAsync();
-                address = Newtonsoft.Json.JsonConvert.DeserializeObject<Address>(response);
+                if(rs.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    response = await rs.Content.ReadAsStringAsync();
+                    address = Newtonsoft.Json.JsonConvert.DeserializeObject<Address>(response);
+                }
             } while (retry && retryIndex <= retryCount);
             return address;
         }

@@ -5,7 +5,7 @@ using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace BibliotecaAPI.Controllers
 {
@@ -26,14 +26,15 @@ namespace BibliotecaAPI.Controllers
                 Book = reserve.Book,
                 StartDate = reserve.StartDate,
                 EndDate = reserve.EndDate,
-                Username = User.Identity.Name,
+                CustomerId = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value),
             }));
         }
 
         [HttpGet, AllowAnonymous, Route("current_user")]
         public IActionResult GetReserverOfCurrentUser()
         {
-            return Ok(_reservation.GetReserves(User.Identity.Name));
+            var id = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+            return Ok(_reservation.GetReserves(id));
             // User.FindFirst(ClaimTypes.Sid) Achar o Id
         }
 
@@ -62,10 +63,10 @@ namespace BibliotecaAPI.Controllers
             }, id));
         }
 
-        /*[HttpPost, AllowAnonymous, Route("finalize/{id}")]
+        [HttpPost, AllowAnonymous, Route("finalize/{id}")]
         public IActionResult Finalize(Guid id)
         {
-
-        }*/
+            return Ok(_reservation.Finalize(id));
+        }
     }
 }

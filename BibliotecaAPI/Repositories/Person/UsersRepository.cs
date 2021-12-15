@@ -1,4 +1,6 @@
-﻿using BibliotecaAPI.DTOs.ResultDTO;
+﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
+using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Models.Login;
 using System;
@@ -16,10 +18,12 @@ namespace BibliotecaAPI.Repositories
             _users = new Dictionary<Guid, User>();
         }
 
-        public IEnumerable<User> Get(string cpf,int age, string name,int page, int size)
+        public IEnumerable<User> Get(UserQuery parameters)
         {
-            var users = _users.Values.Where(u => u.Username == name && u.Age == age && u.CPF == cpf);
-            return users.Skip( page == 1 ? 0 : (page - 1) * size).Take(size);
+            var users = _users.Values.WhereIf(parameters.Name, x => x.Username == parameters.Name)
+                .WhereIf(parameters.CPF, x => x.CPF == parameters.CPF)
+                .WhereIf(parameters.Age, x => x.Age == parameters.Age);
+            return users.Paginaze(parameters.Page, parameters.Size);
         }
 
         public User Get(Guid id)

@@ -20,6 +20,8 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, AllowAnonymous]
         public IActionResult PostAuthor(NewAuthorDTO newAuthor)
         {
+            newAuthor.Validar();
+            if (!newAuthor.Valido) return BadRequest();
             return Ok(_authorService.RegisterAuthor(
                 new Author
                 {

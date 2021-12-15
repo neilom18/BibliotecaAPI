@@ -94,6 +94,7 @@ namespace BibliotecaAPI
             services.AddSingleton<AuthorRepository>();
             services.AddSingleton<BookRepository>(); 
             services.AddSingleton<ReservationRepository>();
+            services.AddSingleton<WithdrawRepository>();
 
             services.AddSingleton<JWTTokenService>();
 
@@ -103,6 +104,7 @@ namespace BibliotecaAPI
             services.AddTransient<AuthorService>();
             services.AddTransient<BookService>();
             services.AddTransient<ReservationService>();
+            services.AddTransient<WithdrawService>();
             services.AddTransient<AddressService>();
             services.AddTransient<LoginManager>();
         }
@@ -120,13 +122,13 @@ namespace BibliotecaAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            
             repository.Create
                 (
                     new Models.User
                     {
                         Username = "admin",
-                        Password = "admin",
+                        Password = "admin123",
                         Role = "admin"
                     }
                 );

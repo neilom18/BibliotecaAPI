@@ -1,4 +1,5 @@
 ﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -32,26 +33,31 @@ namespace BibliotecaAPI.Repositories
             return null;
         }
 
-        public IEnumerable<Reserve> GetByUsername(string username)
+        public IEnumerable<Reserve> GetById(Guid id)
         {
-            return _reservation.Values.Where(x => x.Username == username);
+            return _reservation.Values.Where(x => x.CustomerId == id);
         }
 
         public IEnumerable<Reserve> Get(ReserveQuery parameters)
         {
             IEnumerable<Reserve> reserveFiltered = _reservation.Values;
 
-            if (parameters.BookName != null)
+            /*if (parameters.BookName != null)
                 reserveFiltered = reserveFiltered.Where(x => x.Book.Any(b => b.Title == parameters.BookName));
             if(parameters.StartDate != null)
                 reserveFiltered = reserveFiltered.Where(x => x.StartDate == parameters.StartDate);
             if(parameters.EndDate != null)
                 reserveFiltered = reserveFiltered.Where(x => x.EndDate == parameters.EndDate);
             if(parameters.AuthorId != null)
-                reserveFiltered = reserveFiltered.Where(x => x.Book.Any(b => b.AuthorId == parameters.AuthorId));
+                reserveFiltered = reserveFiltered.Where(x => x.Book.Any(b => b.AuthorId == parameters.AuthorId));*/
 
-            return reserveFiltered.Skip(parameters.Page == 1 ? 0 : (parameters.Page - 1) * parameters.Size)
-                .Take(parameters.Size).ToList();
+            reserveFiltered = reserveFiltered.WhereIf(parameters.BookName, x => x.Book.Any(b => b.Title == parameters.BookName))
+                .WhereIf(parameters.StartDate, x => x.StartDate == parameters.StartDate)
+                .WhereIf(parameters.EndDate, x => x.EndDate == parameters.EndDate)
+                .WhereIf(parameters.AuthorId, x => x.Book.Any(b => b.AuthorId == parameters.AuthorId));
+
+
+            return reserveFiltered.Paginaze(parameters.Page, parameters.Size);
         }
 
         public bool Cancel(Guid id)
@@ -77,10 +83,14 @@ namespace BibliotecaAPI.Repositories
             throw new Exception();
         }
 
-        public void Finalize(Guid id) 
+        public Reserve Finalize(Guid id) 
         {
-            var r = Get(id);
-            r.Status = Enums.ReserveStatus.Finalized;
+            if(_reservation.TryGetValue(id, out var reserve))
+            {
+                reserve.Status = Enums.ReserveStatus.Finalized;
+                return reserve;
+            }
+            throw new Exception();
         }
     }
 }

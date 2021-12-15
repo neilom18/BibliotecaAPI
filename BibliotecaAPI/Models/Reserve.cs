@@ -8,7 +8,7 @@ namespace BibliotecaAPI.Models
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Username { get; set; }
+        public Guid CustomerId { get; set; }
         public ReserveStatus Status { get; set; }
         public List<Book> Book { get; set; }
     }

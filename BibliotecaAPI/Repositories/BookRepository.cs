@@ -1,4 +1,5 @@
 ﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -34,17 +35,21 @@ namespace BibliotecaAPI.Repositories
         {
             IEnumerable<Book> bookFiltered = _book.Values;
 
-            if(parameters.AuthorName != null)
+            /*if(parameters.AuthorName != null)
                 bookFiltered = bookFiltered.Where(b => b.AuthorName == parameters.AuthorName);
             if(parameters.Title != null)
                 bookFiltered = bookFiltered.Where(b => b.Title == parameters.Title);
             if(parameters.Description != null)
                 bookFiltered = bookFiltered.Where(b => b.Description == parameters.Description);
             if(parameters.ReleaseYear != null)
-                bookFiltered = bookFiltered.Where(b => b.ReleaseYear == parameters.ReleaseYear);
+                bookFiltered = bookFiltered.Where(b => b.ReleaseYear == parameters.ReleaseYear);*/
 
-            return bookFiltered.Skip(parameters.Page == 1 ? 0 : (parameters.Page - 1) * parameters.Size)
-                .Take(parameters.Size).ToList();
+            bookFiltered.WhereIf(parameters.AuthorName, x => x.AuthorName == parameters.AuthorName)
+                .WhereIf(parameters.Title, x => x.Title == parameters.Title)
+                .WhereIf(parameters.Description, x => x.Description == parameters.Description)
+                .WhereIf(parameters.ReleaseYear, x => x.ReleaseYear == parameters.ReleaseYear);
+
+            return bookFiltered.Paginaze(parameters.Page, parameters.Size);
         }
 
         public Book Update(Book book, Guid id)

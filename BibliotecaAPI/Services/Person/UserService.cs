@@ -1,12 +1,11 @@
 ﻿using BibliotecaAPI.DTOs;
 using BibliotecaAPI.DTOs.Login;
+using BibliotecaAPI.DTOs.Query;
 using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.Manager;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
-using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,9 +27,9 @@ namespace BibliotecaAPI.Services
             _loginManager = loginManager;
         }
 
-        public IEnumerable<UserDataDTO> Get(string cpf,int age,string name,int page, int size)
+        public IEnumerable<UserDataDTO> Get(UserQuery paramters)
         {
-            var user = _usersRepository.Get(cpf,age,name,page, size);
+            var user = _usersRepository.Get(paramters);
 
             return user.Select(u =>
             {
@@ -87,7 +86,6 @@ namespace BibliotecaAPI.Services
                 UserLogin = new UserLoginResultDTO
                 {
                     Username = loginResult.User.Username,
-                    Id = loginResult.User.Id,
                     Token = token,
                     Role = loginResult.User.Role,
                 }

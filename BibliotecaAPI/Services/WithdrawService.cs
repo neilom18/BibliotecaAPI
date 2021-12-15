@@ -1,5 +1,8 @@
-﻿using BibliotecaAPI.Models;
+﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
+using System;
+using System.Collections.Generic;
 
 namespace BibliotecaAPI.Services
 {
@@ -15,6 +18,22 @@ namespace BibliotecaAPI.Services
         public Withdraw RegisterWithdraw(Withdraw withdraw)
         {
             return _repository.Register(withdraw);
+        }
+
+        public IEnumerable<Withdraw> GetWithdraw(WithdrawQuery parameters)
+        {
+            return _repository.Get(parameters);
+        }
+
+        public Withdraw GetWithdrawById(Guid id)
+        {
+            return _repository.GetStarted(id);
+        }
+
+        public Withdraw FinalizeWithdraw(Guid id)
+        {
+            // Validação a fazer
+            return _repository.Finalize(id);
         }
     }
 }

@@ -29,7 +29,10 @@ namespace BibliotecaAPI.Services
             if (res is null || res.Cep is null)
             {
                 if (customer.Address is null)
-                    return UserCreateResult.ErrorResult(UserCreateResult.UserCreateException.USER_CREATE_EXCEPTION);
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
+                res = await _addressService.GetAddressAsync(customer.Address.Cep, 5);
+                if (res is null || res.Cep is null) 
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
             else { customer.Address = res; }
 
