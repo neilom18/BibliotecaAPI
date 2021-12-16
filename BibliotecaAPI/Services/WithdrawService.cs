@@ -17,6 +17,7 @@ namespace BibliotecaAPI.Services
 
         public Withdraw RegisterWithdraw(Withdraw withdraw)
         {
+            
             return _repository.Register(withdraw);
         }
 

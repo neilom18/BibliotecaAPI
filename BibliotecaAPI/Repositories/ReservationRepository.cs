@@ -1,4 +1,5 @@
 ﻿using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.Enums;
 using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
 using System;
@@ -64,7 +65,7 @@ namespace BibliotecaAPI.Repositories
         {
             if (_reservation.TryGetValue(id, out var reserve)) 
             {
-                reserve.Status = Enums.ReserveStatus.Canceled;
+                reserve.Status = EStatus.Canceled;
                 return true;
             }
             return false;
@@ -87,10 +88,22 @@ namespace BibliotecaAPI.Repositories
         {
             if(_reservation.TryGetValue(id, out var reserve))
             {
-                reserve.Status = Enums.ReserveStatus.Finalized;
+                reserve.Status = EStatus.Finalized;
                 return reserve;
             }
             throw new Exception();
+        }
+
+        public int NumberOfReserversInDate(DateTime dateStart,DateTime dateEnd, Guid bookId)
+        {
+            var books = _reservation.Values.Where(y => y.Status == EStatus.Started && y.Book.Any(b => b.Id == bookId));
+            /*books = books.Where(x => dateStart.Date >= x.StartDate.Date && dateEnd.Date <= x.EndDate.Date ||
+                                dateStart.Date >= x.StartDate.Date && dateEnd.Date >= x.EndDate.Date && dateStart.Date <= x.EndDate.Date ||
+                                dateStart.Date <= x.StartDate.Date && dateEnd.Date <= x.EndDate.Date && dateEnd.Date >= x.StartDate.Date
+                                );*/
+            books = books.Where(x => dateStart.Date <= x.StartDate.Date && dateEnd.Date >= x.StartDate.Date ||
+                                     dateStart.Date <= x.EndDate.Date && dateEnd.Date >= x.EndDate.Date);
+            return books.Count();
         }
     }
 }

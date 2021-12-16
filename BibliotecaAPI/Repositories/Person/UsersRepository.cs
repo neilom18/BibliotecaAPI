@@ -2,7 +2,6 @@
 using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.ExtensionsMethod;
 using BibliotecaAPI.Models;
-using BibliotecaAPI.Models.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;

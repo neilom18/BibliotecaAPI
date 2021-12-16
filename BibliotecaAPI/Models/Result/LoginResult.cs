@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BibliotecaAPI.Models.Login
+namespace BibliotecaAPI.Models
 {
     public class LoginResult
     {

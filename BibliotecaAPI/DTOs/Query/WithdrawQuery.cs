@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BibliotecaAPI.Enums;
+using System;
 
 namespace BibliotecaAPI.DTOs.Query
 {
     public class WithdrawQuery
     {
-        public bool? Finalized { get; set; }
+        public EStatus Finalized { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Guid? AuthorId { get; set; }

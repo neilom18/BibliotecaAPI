@@ -8,6 +8,6 @@ namespace BibliotecaAPI.DTOs
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<Book> Book { get; set; }
+        public List<Guid> BookId { get; set; }
     }
 }

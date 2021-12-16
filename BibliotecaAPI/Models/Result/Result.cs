@@ -1,4 +1,4 @@
-﻿namespace BibliotecaAPI.Models
+﻿namespace BibliotecaAPI.Models.Result
 {
     public class Result
     {

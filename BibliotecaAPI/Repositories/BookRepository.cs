@@ -17,7 +17,6 @@ namespace BibliotecaAPI.Repositories
 
         public Book Register(Book book)
         {
-            book.Id = Guid.NewGuid();
             if(_book.TryAdd(book.Id,book))
                 return book;
             throw new Exception();

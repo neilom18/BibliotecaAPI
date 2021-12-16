@@ -1,6 +1,6 @@
 ﻿namespace BibliotecaAPI.DTOs
 {
-    public class BookDTO
+    public class BookDTO : Validator
     {
         public string Title { get; set; }
         public string Description { get; set; }
@@ -9,5 +9,13 @@
         public System.DateTime ReleaseYear { get; set; }
         public int AmountCopies { get; set; }
         public uint PageNumber { get; set; }
+
+        public override void Validar()
+        {
+            Valido = true;
+            /*if(AmountCopies <= 0) Valido = false;
+            else if(Price <= 0) Valido = false;
+            else if(Description.Length <= 3 || Description.Length > 120) Valido = false;*/
+        }
     }
 }

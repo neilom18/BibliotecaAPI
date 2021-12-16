@@ -21,6 +21,8 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, AllowAnonymous]
         public IActionResult PostBook(BookDTO bookDTO)
         {
+            bookDTO.Validar();
+            if (!bookDTO.Valido) return BadRequest(); 
             return Ok(_bookService.RegisterBook(new Book
             {
                 Title = bookDTO.Title,

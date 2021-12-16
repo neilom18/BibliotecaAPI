@@ -10,7 +10,7 @@ namespace BibliotecaAPI.DTOs
         public override void Validar()
         {
             Valido = true;
-            if(Name is null ||Name.Length > 4) Valido = false;
+            if(Name is null ||Name.Length < 4) Valido = false;
             else if(Age < 12) Valido = false;
             else if(Nationality is null) Valido = false;
         }

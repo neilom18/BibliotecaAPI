@@ -1,8 +1,7 @@
 ﻿using BibliotecaAPI.Models;
-using BibliotecaAPI.Models.Login;
 using BibliotecaAPI.Repositories;
 using System;
-using static BibliotecaAPI.Models.Login.LoginResult;
+using static BibliotecaAPI.Models.LoginResult;
 
 namespace BibliotecaAPI.Manager
 {

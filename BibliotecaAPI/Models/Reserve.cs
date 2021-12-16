@@ -9,7 +9,11 @@ namespace BibliotecaAPI.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public Guid CustomerId { get; set; }
-        public ReserveStatus Status { get; set; }
+        public EStatus Status { get; set; }
         public List<Book> Book { get; set; }
+        public Reserve()
+        {
+            Book = new List<Book>();
+        }
     }
 }

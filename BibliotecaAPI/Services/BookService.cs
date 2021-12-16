@@ -12,9 +12,9 @@ namespace BibliotecaAPI.Services
         private readonly BookRepository _repository;
         private readonly AuthorRepository _authorRepository;
 
-        public BookService(AuthorRepository authorRepository)
+        public BookService(BookRepository repository,AuthorRepository authorRepository)
         {
-            _repository = new BookRepository();
+            _repository = repository;
             _authorRepository = authorRepository;
         }
 
@@ -23,6 +23,7 @@ namespace BibliotecaAPI.Services
             var author = _authorRepository.Get(book.AuthorId);
             book.AuthorName = author.Name;
 
+            book.Id = Guid.NewGuid();
             _authorRepository.AddBook(book);
 
             return _repository.Register(book);

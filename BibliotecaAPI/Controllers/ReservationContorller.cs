@@ -23,11 +23,10 @@ namespace BibliotecaAPI.Controllers
         {
             return Ok(_reservation.RegisterReserve(new Reserve
             {
-                Book = reserve.Book,
                 StartDate = reserve.StartDate,
                 EndDate = reserve.EndDate,
                 CustomerId = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value),
-            }));
+            }, reserve.BookId));
         }
 
         [HttpGet, AllowAnonymous, Route("current_user")]
@@ -57,10 +56,9 @@ namespace BibliotecaAPI.Controllers
         {
             return Ok(_reservation.Update(new Reserve
             {
-                Book = reserve.Book,
                 StartDate = reserve.StartDate,
                 EndDate = reserve.EndDate,
-            }, id));
+            }, id, reserve.BookId));
         }
 
         [HttpPost, AllowAnonymous, Route("finalize/{id}")]
