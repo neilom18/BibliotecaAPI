@@ -20,10 +20,9 @@ namespace BibliotecaAPI.Services
 
         public Book RegisterBook(Book book)
         {
+            _repository.Get(book.Id);
             var author = _authorRepository.Get(book.AuthorId);
-            book.AuthorName = author.Name;
-
-            book.Id = Guid.NewGuid();
+            book.SetAuthorName(author.Name);
             _authorRepository.AddBook(book);
 
             return _repository.Register(book);
@@ -37,6 +36,11 @@ namespace BibliotecaAPI.Services
         public IEnumerable<Book> GetBooks(BookQuery parameters)
         {
             return _repository.Get(parameters);
+        }
+
+        public IEnumerable<Book> GetBooks(IEnumerable<Guid> ids)
+        {
+            return _repository.Get(ids);
         }
 
         public Book UpdateBook(Book book, Guid id) 

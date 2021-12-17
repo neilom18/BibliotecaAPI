@@ -126,11 +126,13 @@ namespace BibliotecaAPI
             repository.Create
                 (
                     new Models.User
-                    {
-                        Username = "admin",
-                        Password = "admin123",
-                        Role = "admin"
-                    }
+                    (
+                        username: "admin",
+                        password: "admin",
+                        document: "9999999999",
+                        age: 99
+                    )
+                    
                 );
 
             app.UseAuthentication();

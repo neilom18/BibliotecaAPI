@@ -4,10 +4,22 @@ namespace BibliotecaAPI.Models
 {
     public class Employeer
     {
-        public string CPF { get; set; }
-        public string CEP { get; set; }
-        public Address? Address { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public User User { get; set; }
+        public Employeer(string document, string cep, Address address, User user)
+        {
+            Document = document;
+            CEP = cep;
+            Address = address;
+            User = user;
+        }
+
+        public string Document { get; private set; }
+        public string CEP { get; private set; }
+        public Address? Address { get; private set; }
+        public DateTime CreatedDate { get; private set; }
+        public User User { get; private set; }
+
+        public void SetCreatedDate(DateTime date) => CreatedDate = date;
+        public void SetAddress(Address address) => Address = address;
+        public void SetRole() => User.SetRole("employeer");
     }
 }

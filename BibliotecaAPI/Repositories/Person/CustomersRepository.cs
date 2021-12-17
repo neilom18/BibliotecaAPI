@@ -15,7 +15,7 @@ namespace BibliotecaAPI.Repositories
 
         public void Create(Customer customer)
         {
-            customer.CreatedDate = DateTime.Now;
+            customer.SetCreatedDate(DateTime.Now);
             if (!_customer.TryAdd(customer.User.Id, customer))
                 throw new Exception();
         }

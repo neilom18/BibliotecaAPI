@@ -1,5 +1,6 @@
 ﻿using BibliotecaAPI.DTOs;
 using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,16 +23,24 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PostBook(BookDTO bookDTO)
         {
             bookDTO.Validar();
-            if (!bookDTO.Valido) return BadRequest(); 
-            return Ok(_bookService.RegisterBook(new Book
+            if (!bookDTO.Valido) return BadRequest();
+            try
             {
-                Title = bookDTO.Title,
-                Description = bookDTO.Description,
-                AmountCopies = bookDTO.AmountCopies,
-                PageNumber = bookDTO.PageNumber,
-                AuthorId = bookDTO.AuthorId,
-                ReleaseYear = bookDTO.ReleaseYear.Date,
-            }));
+                return Ok(_bookService.RegisterBook(new Book
+                        (
+                            title: bookDTO.Title,
+                            description: bookDTO.Description,
+                            price: bookDTO.Price,
+                            authorId: bookDTO.AuthorId,
+                            releaseYear: bookDTO.ReleaseYear,
+                            pageNumber: bookDTO.PageNumber,
+                            amountCopies: bookDTO.AmountCopies
+                        )));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Message = ex.Message });
+            }
         }
 
         [HttpGet, AllowAnonymous, Route("{id}")]
@@ -49,13 +58,16 @@ namespace BibliotecaAPI.Controllers
         [HttpPut, AllowAnonymous]
         public IActionResult PutBook(BookDTO bookDTO,Guid id)
         {
-            return Ok(_bookService.UpdateBook(new Book 
-            {
-                Title = bookDTO.Title,
-                Description = bookDTO.Description,
-                AmountCopies = bookDTO.AmountCopies,
-                PageNumber = bookDTO.PageNumber,
-            }, id));
+            return Ok(_bookService.UpdateBook(new Book
+                (
+                    title: bookDTO.Title,
+                    description: bookDTO.Description,
+                    price: bookDTO.Price,
+                    authorId: bookDTO.AuthorId,
+                    releaseYear: bookDTO.ReleaseYear,
+                    amountCopies: bookDTO.AmountCopies,
+                    pageNumber: bookDTO.PageNumber
+                    ), id));
         }
 
         [HttpDelete, AllowAnonymous, Route("{id}")]

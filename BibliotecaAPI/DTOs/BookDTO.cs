@@ -13,9 +13,9 @@
         public override void Validar()
         {
             Valido = true;
-            /*if(AmountCopies <= 0) Valido = false;
+            if(AmountCopies <= 0) Valido = false;
             else if(Price <= 0) Valido = false;
-            else if(Description.Length <= 3 || Description.Length > 120) Valido = false;*/
+            else if(Description.Length <= 3 || Description.Length > 120) Valido = false;
         }
     }
 }

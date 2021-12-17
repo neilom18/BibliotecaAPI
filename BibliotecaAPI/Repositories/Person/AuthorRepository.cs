@@ -20,17 +20,14 @@ namespace BibliotecaAPI.Repositories
 
         public void Register(Author author)
         {
-            Guid id = Guid.NewGuid();
-            author.Id = id;
-            author.Books = new List<Book>();
-            if (!_author.TryAdd(id, author))
+            if (!_author.TryAdd(author.Id, author))
                 throw new Exception();
         }
 
         public void AddBook(Book book)
         {
             var author = Get(book.AuthorId);
-            author.Books.Add(book);
+            author.Book.Add(book);
         }
 
         public Author Get(Guid id)
@@ -67,11 +64,8 @@ namespace BibliotecaAPI.Repositories
         {
             if(_author.TryGetValue(id, out var authorToUpdate))
             {
-                authorToUpdate.Name = author.Name;
-                authorToUpdate.Age = author.Age;
-                authorToUpdate.Nationality = author.Nationality;
-
-                return Get(id);  
+                authorToUpdate.Update(author);
+                return Get(id);
             }
 
             throw new Exception("Usuario não encontrado");
@@ -80,7 +74,7 @@ namespace BibliotecaAPI.Repositories
         public void Delete(Guid id)
         {
             var author = Get(id);
-            _bookRepository.DeleteAllByAuthor(author.Books);
+            _bookRepository.DeleteAllByAuthor(author.Book);
             _author.Remove(id);
         }
     }

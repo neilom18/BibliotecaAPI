@@ -30,6 +30,14 @@ namespace BibliotecaAPI.Repositories
             throw new Exception();
         }
 
+        public IEnumerable<Book> Get(IEnumerable<Guid> ids)
+        {
+            foreach(var id in ids)
+            {
+                yield return Get(id);
+            }
+        }
+
         public IEnumerable<Book> Get(BookQuery parameters)
         {
             IEnumerable<Book> bookFiltered = _book.Values;
@@ -55,11 +63,7 @@ namespace BibliotecaAPI.Repositories
         {
             if(_book.TryGetValue(id, out Book bookToUpdate))
             {
-                bookToUpdate.Title = book.Title;
-                bookToUpdate.Description = book.Description;
-                bookToUpdate.AmountCopies = book.AmountCopies;
-                bookToUpdate.PageNumber = book.PageNumber;
-
+                bookToUpdate = book;
                 return bookToUpdate;
             }
 

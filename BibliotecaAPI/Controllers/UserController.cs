@@ -1,5 +1,6 @@
 ﻿using BibliotecaAPI.DTOs;
 using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -28,18 +29,18 @@ namespace BibliotecaAPI.Controllers
             newUserDTO.Validar();
             if (!newUserDTO.Valido) return BadRequest();
             var result = _customerService.CreateAsync(new Customer
-            {
-                User = new User
-                {
-                    Username = newUserDTO.Username,
-                    Password = newUserDTO.Password,
-                    Age = newUserDTO.Age,
-                    CPF = newUserDTO.CPF,
-                },
-                CPF = newUserDTO.CPF,
-                CEP = newUserDTO.CEP,
-                Address = newUserDTO.Address
-            }).Result;
+            (
+                user: new User
+                (
+                    username: newUserDTO.Username,
+                    password: newUserDTO.Password,
+                    age: newUserDTO.Age,
+                    document: newUserDTO.Document
+                    ),
+                document: newUserDTO.Document,
+                cep: newUserDTO.CEP,
+                address: newUserDTO.Address
+            )).GetAwaiter().GetResult();
 
             if (result.Errors)
             {
@@ -62,18 +63,18 @@ namespace BibliotecaAPI.Controllers
         public IActionResult EmployeerRegister([FromBody] NewUserDTO newUserDTO)
         {
             var result = _employeerService.CreateAsync(new Employeer
-            {
-                User = new User
-                {
-                    Username = newUserDTO.Username,
-                    Password = newUserDTO.Password,
-                    Age = newUserDTO.Age,
-                    CPF = newUserDTO.CPF,
-                },
-                CPF = newUserDTO.CPF,
-                CEP = newUserDTO.CEP,
-                Address = newUserDTO.Address
-            }).Result;
+            (
+                user: new User
+                (
+                    username: newUserDTO.Username,
+                    password: newUserDTO.Password,
+                    age: newUserDTO.Age,
+                    document: newUserDTO.Document
+                    ),
+                document: newUserDTO.Document,
+                cep: newUserDTO.CEP,
+                address: newUserDTO.Address
+            )).GetAwaiter().GetResult();
 
             if (result.Errors)
             {

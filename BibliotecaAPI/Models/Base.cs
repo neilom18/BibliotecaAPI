@@ -1,7 +1,13 @@
-﻿namespace BibliotecaAPI.Models
+﻿using System;
+
+namespace BibliotecaAPI.Models
 {
     public class Base
     {
-        public System.Guid Id { get; set; }
+        public Base()
+        {
+            Id = Guid.NewGuid();
+        }
+        public Guid Id { get; private set; }
     }
 }

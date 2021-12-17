@@ -5,6 +5,7 @@ using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Security.Claims;
 
 namespace BibliotecaAPI.Controllers
@@ -13,29 +14,35 @@ namespace BibliotecaAPI.Controllers
     public class WithdrawController : ControllerBase
     {
         private readonly WithdrawService _withdrawService;
+        private readonly BookService _bookService;
 
-        public WithdrawController(WithdrawService withdrawService)
+        public WithdrawController(WithdrawService withdrawService,BookService bookService)
         {
             _withdrawService = withdrawService;
+            _bookService = bookService;
         }
 
         [HttpPost, AllowAnonymous]
         public IActionResult PostWithdraw(WithdrawDTO withdrawDTO)
         {
-            Withdraw with = null;
+            withdrawDTO.Validar();
+            if (!withdrawDTO.Valido) return BadRequest();
+            Withdraw with;
             if (withdrawDTO.ReserveId != null)
             {
-                // Criar o Withdraw com os dados da reserva 
+                // Pega um Withdraw em aberto da reserva correspondente
+                with = _withdrawService.GetReserve(withdrawDTO.ReserveId.Value);
             }
             else
             {
+                _bookService.GetBooks(withdrawDTO.Book);
                 with = new Withdraw
-                {
-                    Book = withdrawDTO.Book,
-                    StartDate = withdrawDTO.StartDate,
-                    EndDate = withdrawDTO.EndDate,
-                    CustomerId = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value),
-                };
+                    (
+                        book: _bookService.GetBooks(withdrawDTO.Book).ToList(),
+                        startDate: withdrawDTO.StartDate,
+                        endDate: withdrawDTO.EndDate,
+                        customerId: Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value)
+                    );
             }
 
             return Ok(_withdrawService.RegisterWithdraw(with));

@@ -5,7 +5,7 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public int Age { get; set; }
-        public string CPF { get; set; }
+        public string Document { get; set; }
         public string CEP { get; set; }
         public Models.Address Address { get; set; }
 
@@ -18,7 +18,7 @@
             else if(Password.Length < 7) Valido = false;
             else if(CEP is null || CEP.Length != 8) Valido = false;
             else if(Age < 6) Valido = false;
-            else if(!int.TryParse(CPF, out var cep)) Valido = false;
+            else if(!int.TryParse(Document, out _)) Valido = false;
         }
     }
 

@@ -1,10 +1,11 @@
 ﻿
-	Continuar o Withdraw -- Disponibilidade de livros
 	
 	// --- //
-	Implementar as Exceptions.
-	Trocar campo CPF por Document
+	-----> Implementar as Exceptions. <----------
 
-	Implementar as regras de negocio que falta (6)
 	Fazer as validações
-	Withdraw -> Trocar List<Book> por List<BookDTO> e fazer as validações e instanciar por method de extensão
+	^^^^^^^^^^^^^^^^^^^
+	|||||||||||||||||||
+	|||||||||||||||||||
+	|||||||||||||||||||
+	|||||||||||||||||||

@@ -34,7 +34,7 @@ namespace BibliotecaAPI.Services
                 if (res is null || res.Cep is null) 
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
-            else { customer.Address = res; }
+            else { customer.SetAddress(res) ; }
 
             var userExist = _usersRepository.GetbyUsername(customer.User.Username);
 
@@ -42,7 +42,7 @@ namespace BibliotecaAPI.Services
             if (userExist != null)
                 return UserCreateResult.ErrorResult(UserCreateResult.UsernameUsedExcpetion.USERNAME_USED_EXCEPTION);
 
-            customer.User.Role = "customer";
+            customer.SetRole();
             var newUser = _usersRepository.Create(customer.User); // Salva o Usuario
 
             _clientsRepository.Create(customer); // Salva o Cliente

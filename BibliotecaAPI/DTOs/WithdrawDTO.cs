@@ -9,12 +9,13 @@ namespace BibliotecaAPI.DTOs
         public Guid? ReserveId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<Book> Book { get; set; } // Trocar Book por BookDTO
-                                             // e fazer as validações e instanciar por method de extensão
+        public IEnumerable<Guid> Book { get; set; } 
 
         public override void Validar()
         {
-            throw new NotImplementedException();
+            Valido = true;
+            if (StartDate < DateTime.UtcNow.AddMinutes(1)) Valido = false;
+            else if(EndDate < DateTime.UtcNow.AddMonths(1)) Valido = false;
         }
 
     }

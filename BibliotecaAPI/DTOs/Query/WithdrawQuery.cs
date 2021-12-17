@@ -5,7 +5,7 @@ namespace BibliotecaAPI.DTOs.Query
 {
     public class WithdrawQuery
     {
-        public EStatus Finalized { get; set; }
+        public EStatus Status { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Guid? AuthorId { get; set; }

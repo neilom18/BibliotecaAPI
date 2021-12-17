@@ -24,11 +24,11 @@ namespace BibliotecaAPI.Controllers
             if (!newAuthor.Valido) return BadRequest();
             return Ok(_authorService.RegisterAuthor(
                 new Author
-                {
-                    Name = newAuthor.Name,
-                    Age = newAuthor.Age,
-                    Nationality = newAuthor.Nationality,
-                }));
+                (
+                    name: newAuthor.Name,
+                    age: newAuthor.Age,
+                    nationality: newAuthor.Nationality
+                    )));
         }
 
         [HttpGet, AllowAnonymous, Route("{id}")]
@@ -41,11 +41,11 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PutAuthor(NewAuthorDTO newAuthor,[FromQuery] Guid id)
         {
             return Ok(_authorService.Update(new Author
-            {
-                Name = newAuthor.Name,
-                Age = newAuthor.Age,
-                Nationality = newAuthor.Nationality,
-            }, id));
+            (
+                name: newAuthor.Name,
+                age: newAuthor.Age,
+                nationality: newAuthor.Nationality
+                ), id));
         }
 
         [HttpGet, AllowAnonymous]

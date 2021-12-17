@@ -19,11 +19,10 @@ namespace BibliotecaAPI.Repositories
 
         public Reserve Register(Reserve reservation)
         {
-            reservation.Id = Guid.NewGuid();
             if(_reservation.TryAdd(reservation.Id, reservation))
                 return reservation;
 
-            throw new Exception();
+            throw new Exception("Não foi possível adicionar esse livro!");
         }
 
         public Reserve Get(Guid id)
@@ -34,7 +33,7 @@ namespace BibliotecaAPI.Repositories
             return null;
         }
 
-        public IEnumerable<Reserve> GetById(Guid id)
+        public IEnumerable<Reserve> GetByCustomerId(Guid id)
         {
             return _reservation.Values.Where(x => x.CustomerId == id);
         }
@@ -65,33 +64,33 @@ namespace BibliotecaAPI.Repositories
         {
             if (_reservation.TryGetValue(id, out var reserve)) 
             {
-                reserve.Status = EStatus.Canceled;
+                reserve.SetStatus(EStatus.Canceled);
                 return true;
             }
             return false;
         }
 
-        public Reserve Update(Reserve reserve, Guid id)
+        public Reserve Update(Reserve reserve)
         {
-            if (_reservation.TryGetValue(id, out var reserveToUpdate))
+            if (_reservation.TryGetValue(reserve.Id, out var reserveToUpdate))
             {
-                reserveToUpdate.StartDate = reserve.StartDate;
-                reserveToUpdate.EndDate = reserve.EndDate;
-                reserveToUpdate.Book = reserve.Book;
+                reserveToUpdate.SetStartDate(reserve.StartDate);
+                reserveToUpdate.SetEndDate(reserve.EndDate);
+                reserveToUpdate.SetBook(reserve.Book);
 
-                return Get(id);
+                return reserveToUpdate;
             }
-            throw new Exception();
+            throw new Exception("O livro informado não foi encontrado");
         }
 
         public Reserve Finalize(Guid id) 
         {
             if(_reservation.TryGetValue(id, out var reserve))
             {
-                reserve.Status = EStatus.Finalized;
+                reserve.SetStatus(EStatus.Finalized);
                 return reserve;
             }
-            throw new Exception();
+            throw new Exception("O livro informado não foi encontrado");
         }
 
         public int NumberOfReserversInDate(DateTime dateStart,DateTime dateEnd, Guid bookId)

@@ -22,11 +22,11 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PostReserve(ReserveDTO reserve) 
         {
             return Ok(_reservation.RegisterReserve(new Reserve
-            {
-                StartDate = reserve.StartDate,
-                EndDate = reserve.EndDate,
-                CustomerId = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value),
-            }, reserve.BookId));
+                (
+                    startDate: reserve.StartDate,
+                    endDate: reserve.EndDate,
+                    customerId: Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value)
+                ),reserve.BookId));
         }
 
         [HttpGet, AllowAnonymous, Route("current_user")]
@@ -55,10 +55,10 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PutReserves(ReserveDTO reserve, Guid id)
         {
             return Ok(_reservation.Update(new Reserve
-            {
-                StartDate = reserve.StartDate,
-                EndDate = reserve.EndDate,
-            }, id, reserve.BookId));
+                (
+                    reserve.StartDate,
+                    reserve.EndDate
+                ), reserve.BookId));
         }
 
         [HttpPost, AllowAnonymous, Route("finalize/{id}")]

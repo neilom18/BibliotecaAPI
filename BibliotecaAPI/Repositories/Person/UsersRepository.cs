@@ -20,7 +20,7 @@ namespace BibliotecaAPI.Repositories
         public IEnumerable<User> Get(UserQuery parameters)
         {
             var users = _users.Values.WhereIf(parameters.Name, x => x.Username == parameters.Name)
-                .WhereIf(parameters.CPF, x => x.CPF == parameters.CPF)
+                .WhereIf(parameters.Document, x => x.Document == parameters.Document)
                 .WhereIf(parameters.Age, x => x.Age == parameters.Age);
             return users.Paginaze(parameters.Page, parameters.Size);
         }
@@ -45,7 +45,6 @@ namespace BibliotecaAPI.Repositories
 
         public User Create(User user)
         {
-            user.Id = Guid.NewGuid();
             if (_users.TryAdd(user.Id, user))
                 return user;
 
@@ -61,7 +60,7 @@ namespace BibliotecaAPI.Repositories
         {
             var user = Get(id);
             if(_users.TryGetValue(user.Id, out user))
-                user.Password = newPassword;
+                user.SetPassword(newPassword);
         }
         public User Login(string username, string password)
         {

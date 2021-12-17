@@ -1,7 +1,6 @@
 ﻿using BibliotecaAPI.DTOs;
-using BibliotecaAPI.DTOs.Login;
-using BibliotecaAPI.DTOs.Query;
 using BibliotecaAPI.DTOs.ResultDTO;
+using BibliotecaAPI.DTOs.Query;
 using BibliotecaAPI.Manager;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
@@ -38,7 +37,7 @@ namespace BibliotecaAPI.Services
                     Username = u.Username,
                     Role = u.Role,
                     Age = u.Age,
-                    CPF = u.CPF,
+                    Document = u.Document,
                 };
             });
         }
@@ -51,7 +50,7 @@ namespace BibliotecaAPI.Services
                 Username = user.Username,
                 Role = user.Role,
                 Age = user.Age,
-                CPF = user.CPF,
+                Document = user.Document,
             };
         }
         public UserDataDTO GetById(Guid id)
@@ -62,7 +61,7 @@ namespace BibliotecaAPI.Services
                 Username = user.Username,
                 Role = user.Role,
                 Age = user.Age,
-                CPF = user.CPF,
+                Document = user.Document,
             };
         }
 

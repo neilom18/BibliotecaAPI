@@ -16,8 +16,7 @@ namespace BibliotecaAPI.Repositories
 
         public Employeer Create(Employeer employeer)
         {
-            employeer.User.Id = Guid.NewGuid();
-            employeer.CreatedDate = DateTime.Now;
+            employeer.SetCreatedDate(DateTime.Now);
             if (_employeer.TryAdd(employeer.User.Id, employeer))
                 return employeer;
 

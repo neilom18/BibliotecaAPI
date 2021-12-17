@@ -1,4 +1,4 @@
-﻿namespace BibliotecaAPI.DTOs.Login
+﻿namespace BibliotecaAPI.DTOs.ResultDTO
 {
     public class LoginResultDTO
     {

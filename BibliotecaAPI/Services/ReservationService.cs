@@ -10,6 +10,7 @@ namespace BibliotecaAPI.Services
     {
         private readonly ReservationRepository _repository;
         private readonly BookRepository _bookRepository;
+        private readonly WithdrawRepository _withdrawRepository;
 
         public ReservationService(ReservationRepository repository, BookRepository bookRepository)
         {
@@ -25,11 +26,14 @@ namespace BibliotecaAPI.Services
             {
                 books.Add(_bookRepository.Get(id));
             }
-            reserve.Book = books;
+            reserve.SetBook(books);
                                               
             var available = Available(reserve);
             if (available.Available)
+            {
+                _withdrawRepository.OpenWithdraw(reserve);
                 return _repository.Register(reserve);
+            }
             throw new Exception($"O livro {available.Title} não está disponível para reserva nessa data");
         }
 
@@ -41,8 +45,9 @@ namespace BibliotecaAPI.Services
 
             foreach (Book book in reserve.Book)
             {
-                var n = _repository.NumberOfReserversInDate(reserve.StartDate,reserve.EndDate, book.Id);
-                if(n == book.AmountCopies)
+                var n1 = _repository.NumberOfReserversInDate(reserve.StartDate,reserve.EndDate, book.Id);
+                var n2 = _withdrawRepository.NumberOfWithdrawInDate(reserve.StartDate,reserve.EndDate,book.Id);
+                if(n1 + n2 >= book.AmountCopies)
                 {
                     return new Availability { Available = false, Title = book.Title};
                 }
@@ -52,7 +57,7 @@ namespace BibliotecaAPI.Services
 
         public IEnumerable<Reserve> GetReserves(Guid id) 
         {
-            return _repository.GetById(id);
+            return _repository.GetByCustomerId(id);
         }
 
         public IEnumerable<Reserve> GetReserves(ReserveQuery parameters)
@@ -71,7 +76,7 @@ namespace BibliotecaAPI.Services
             return false;
         }
 
-        public Reserve Update(Reserve reserve, Guid id, List<Guid> bookids)
+        public Reserve Update(Reserve reserve, List<Guid> bookids)
         {
             // Pega os livros do repositorio pela lista de ids
             List<Book> books = new List<Book>();
@@ -79,9 +84,9 @@ namespace BibliotecaAPI.Services
             {
                 books.Add(_bookRepository.Get(bookid));
             }
-            reserve.Book = books;
+            reserve.SetBook(books);
 
-            return _repository.Update(reserve, id);
+            return _repository.Update(reserve);
         }
 
         public Reserve Finalize(Guid id)

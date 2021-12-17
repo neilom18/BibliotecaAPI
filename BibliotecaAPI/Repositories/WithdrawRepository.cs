@@ -19,10 +19,28 @@ namespace BibliotecaAPI.Repositories
 
         public Withdraw Register(Withdraw withdraw)
         {
-            withdraw.Id = Guid.NewGuid();
             if(_withdraw.TryAdd(withdraw.Id, withdraw))
+            {
+                withdraw.SetStatus(EStatus.Ongoing);
                 return withdraw;
+            }
             throw new Exception();
+        }
+
+        public void OpenWithdraw(Reserve reserve)
+        {
+            var with = new Withdraw
+                (
+                    book: reserve.Book,
+                    startDate: reserve.StartDate,
+                    endDate: reserve.EndDate,
+                    reservedId: reserve.Id,
+                    customerId: reserve.CustomerId
+                );
+            with.SetStatus(EStatus.Ongoing);
+
+            if (!_withdraw.TryAdd(with.Id, with))
+                throw new Exception();
         }
 
         public int NumberOfWithdrawInDate(DateTime dateStart, DateTime dateEnd, Guid bookId)
@@ -38,7 +56,7 @@ namespace BibliotecaAPI.Repositories
         {
             IEnumerable<Withdraw> withdrawFiltered = _withdraw.Values;
 
-            withdrawFiltered.WhereIf(parameters.Finalized, x => x.Status == parameters.Finalized)
+            withdrawFiltered.WhereIf(parameters.Status, x => x.Status == parameters.Status)
                 .WhereIf(parameters.StartDate, x => x.StartDate == parameters.StartDate)
                 .WhereIf(parameters.EndDate, x => x.EndDate == parameters.EndDate)
                 .WhereIf(parameters.AuthorId, x => x.Book.Any(b => b.AuthorId == parameters.AuthorId))
@@ -49,14 +67,18 @@ namespace BibliotecaAPI.Repositories
 
         public Withdraw GetStarted(Guid id)
         {
-            return _withdraw.Values.Where(w => w.Status == EStatus.Started && w.CustomerId == id).FirstOrDefault();
+            return _withdraw.Values.Where(w => w.Status == EStatus.Started && w.ReservedId == id).SingleOrDefault();
+        }
+        public Withdraw GetOngoing(Guid id)
+        {
+            return _withdraw.Values.Where(w => w.Status == EStatus.Ongoing && w.CustomerId == id).FirstOrDefault();
         }
 
         public Withdraw Finalize(Guid id)
         {
             if(_withdraw.TryGetValue(id, out var withdraw))
             {
-                withdraw.Status = EStatus.Finalized;
+                withdraw.SetStatus(EStatus.Finalized);
                 return withdraw;
             }
 

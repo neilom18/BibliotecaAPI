@@ -24,18 +24,16 @@ namespace BibliotecaAPI.Manager
                 {
                     if (DateTime.Now <= user.LockoutDate?.AddMinutes(15))
                     {
-                        return LoginResult.ErrorResult(UserBlockedException.USER_BLOCKED_EXCEPTION);
+                        return ErrorResult(UserBlockedException.USER_BLOCKED_EXCEPTION);
 
                     }
                     else
                     {
-                        user.IsLockout = false;
-                        user.LockoutDate = null;
-                        user.FailedAttempts = 0;
+                        user.Unlock();
                     }
                 }
 
-                return LoginResult.SucessResult(user);
+                return SucessResult(user);
             }
 
             var userExistsForUsername = _usersRepository.GetbyUsernameBOOL(username);
@@ -44,20 +42,19 @@ namespace BibliotecaAPI.Manager
             {
                 user = _usersRepository.GetbyUsername(username);
 
-                user.FailedAttempts++;
+                user.IncrementFailedAttempts();
 
                 if (user.FailedAttempts > LOGIN_FAILED_LIMIT)
                 {
-                    user.IsLockout = true;
-                    user.LockoutDate = DateTime.Now;
+                    user.Lock();
 
-                    return LoginResult.ErrorResult(UserBlockedException.USER_BLOCKED_EXCEPTION);
+                    return ErrorResult(UserBlockedException.USER_BLOCKED_EXCEPTION);
                 }
 
-                return LoginResult.ErrorResult(InvalidPasswordException.INVALID_PASSWORD_EXCEPTION);
+                return ErrorResult(InvalidPasswordException.INVALID_PASSWORD_EXCEPTION);
 
             }
-            return LoginResult.ErrorResult(AuthenticationException.INVALID_AUTHENTICATION_EXCEPTION);
+            return ErrorResult(AuthenticationException.INVALID_AUTHENTICATION_EXCEPTION);
         }
     }
 }
