@@ -122,18 +122,16 @@ namespace BibliotecaAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            
-            repository.Create
-                (
-                    new Models.User
-                    (
-                        username: "admin",
-                        password: "admin",
-                        document: "9999999999",
-                        age: 99
-                    )
-                    
-                );
+
+            var admin = new Models.User
+            (
+                username: "admin",
+                password: "admin123",
+                document: "9999999999",
+                age: 99
+            );
+            admin.SetRole("admin");
+            repository.Create(admin);
 
             app.UseAuthentication();
 

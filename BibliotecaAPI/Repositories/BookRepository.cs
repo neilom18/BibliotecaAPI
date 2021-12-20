@@ -27,7 +27,12 @@ namespace BibliotecaAPI.Repositories
             if(_book.TryGetValue(id, out Book book))
                 return book;
 
-            throw new Exception();
+            throw new Exception("O livro não pode ser encontrado");
+        }
+
+        public Book Get(Book book)
+        {
+            return _book.Values.Where(b => b.Title == book.Title || b.Id == book.Id).FirstOrDefault();
         }
 
         public IEnumerable<Book> Get(IEnumerable<Guid> ids)
@@ -61,9 +66,9 @@ namespace BibliotecaAPI.Repositories
 
         public Book Update(Book book, Guid id)
         {
-            if(_book.TryGetValue(id, out Book bookToUpdate))
-            {
-                bookToUpdate = book;
+            if (_book.TryGetValue(id, out Book bookToUpdate))
+            { 
+                bookToUpdate.Update(book);
                 return bookToUpdate;
             }
 

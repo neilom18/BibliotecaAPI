@@ -12,10 +12,11 @@ namespace BibliotecaAPI.Services
         private readonly BookRepository _bookRepository;
         private readonly WithdrawRepository _withdrawRepository;
 
-        public ReservationService(ReservationRepository repository, BookRepository bookRepository)
+        public ReservationService(ReservationRepository repository, BookRepository bookRepository, WithdrawRepository withdraw)
         {
             _repository = repository;
             _bookRepository = bookRepository;
+            _withdrawRepository = withdraw;
         }
 
         public Reserve RegisterReserve(Reserve reserve, List<Guid> ids)
@@ -65,15 +66,16 @@ namespace BibliotecaAPI.Services
             return _repository.Get(parameters);
         }
 
-        public bool CancelReserves(Guid id)
+        public void CancelReserves(Guid id)
         {
             var r =_repository.Get(id);
             var d = r.StartDate.Date;
             if (d.DayOfWeek.HasFlag(DayOfWeek.Monday)) d = d.AddDays(-3); 
             int i = DateTime.Compare(d, DateTime.Now);
-            if(i == 0 || i == 1)
-                return _repository.Cancel(id);
-            return false;
+            if (i == 0 || i == 1)
+                _repository.Cancel(id);
+            else
+                throw new Exception("Somente é possivel cancelar até 1 dia util antes");
         }
 
         public Reserve Update(Reserve reserve, List<Guid> bookids)

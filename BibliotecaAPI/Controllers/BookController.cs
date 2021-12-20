@@ -39,14 +39,21 @@ namespace BibliotecaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ExceptionResult { Message = ex.Message });
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
             }
         }
 
         [HttpGet, AllowAnonymous, Route("{id}")]
         public IActionResult GetBook(Guid id)
         {
-            return Ok(_bookService.GetBook(id));
+            try
+            {
+                return Ok(_bookService.GetBook(id));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message});
+            }
         }
 
         [HttpGet, AllowAnonymous]
@@ -58,12 +65,13 @@ namespace BibliotecaAPI.Controllers
         [HttpPut, AllowAnonymous]
         public IActionResult PutBook(BookDTO bookDTO,Guid id)
         {
+            bookDTO.Validar();
+            if(!bookDTO.Valido) return BadRequest();
             return Ok(_bookService.UpdateBook(new Book
                 (
                     title: bookDTO.Title,
                     description: bookDTO.Description,
                     price: bookDTO.Price,
-                    authorId: bookDTO.AuthorId,
                     releaseYear: bookDTO.ReleaseYear,
                     amountCopies: bookDTO.AmountCopies,
                     pageNumber: bookDTO.PageNumber
@@ -73,10 +81,15 @@ namespace BibliotecaAPI.Controllers
         [HttpDelete, AllowAnonymous, Route("{id}")]
         public IActionResult DeleteBook(Guid id) 
         {
-            var deleted = _bookService.DeleteBook(id);
-            if (deleted)
+            try
+            {
+                _bookService.DeleteBook(id);
                 return Ok();
-            return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message});
+            }
         }
 
     }

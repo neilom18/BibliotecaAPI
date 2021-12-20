@@ -1,5 +1,6 @@
 ﻿using BibliotecaAPI.DTOs;
 using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -21,19 +22,35 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, AllowAnonymous]
         public IActionResult PostReserve(ReserveDTO reserve) 
         {
-            return Ok(_reservation.RegisterReserve(new Reserve
-                (
-                    startDate: reserve.StartDate,
-                    endDate: reserve.EndDate,
-                    customerId: Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value)
-                ),reserve.BookId));
+            reserve.Validar();
+            if (!reserve.Valido) return BadRequest();
+            try
+            {
+                return Ok(_reservation.RegisterReserve(new Reserve
+                        (
+                            startDate: reserve.StartDate,
+                            endDate: reserve.EndDate,
+                            customerId: Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value)
+                        ), reserve.BookId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
         }
 
         [HttpGet, AllowAnonymous, Route("current_user")]
         public IActionResult GetReserverOfCurrentUser()
         {
             var id = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value);
-            return Ok(_reservation.GetReserves(id));
+            try
+            {
+                return Ok(_reservation.GetReserves(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
             // User.FindFirst(ClaimTypes.Sid) Achar o Id
         }
 
@@ -46,19 +63,33 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, AllowAnonymous, Route("cancel/{id}")]
         public IActionResult CancelReserve(Guid id)
         {
-            if (_reservation.CancelReserves(id))
+            try
+            {
+                _reservation.CancelReserves(id);
                 return Ok();
-            return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message }) ;
+            }
+           
         }
 
         [HttpPut, AllowAnonymous, Route("{id}")]
         public IActionResult PutReserves(ReserveDTO reserve, Guid id)
         {
-            return Ok(_reservation.Update(new Reserve
-                (
-                    reserve.StartDate,
-                    reserve.EndDate
-                ), reserve.BookId));
+            try
+            {
+                return Ok(_reservation.Update(new Reserve
+                        (
+                            reserve.StartDate,
+                            reserve.EndDate
+                        ), reserve.BookId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message }) ;
+            }
         }
 
         [HttpPost, AllowAnonymous, Route("finalize/{id}")]

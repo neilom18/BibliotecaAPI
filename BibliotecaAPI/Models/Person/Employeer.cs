@@ -4,10 +4,9 @@ namespace BibliotecaAPI.Models
 {
     public class Employeer
     {
-        public Employeer(string document, string cep, Address address, User user)
+        public Employeer(string document, Address address, User user)
         {
             Document = document;
-            CEP = cep;
             Address = address;
             User = user;
         }

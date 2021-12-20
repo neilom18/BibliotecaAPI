@@ -1,5 +1,6 @@
 ﻿using BibliotecaAPI.DTOs;
 using BibliotecaAPI.DTOs.Query;
+using BibliotecaAPI.DTOs.ResultDTO;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,30 +23,51 @@ namespace BibliotecaAPI.Controllers
         {
             newAuthor.Validar();
             if (!newAuthor.Valido) return BadRequest();
-            return Ok(_authorService.RegisterAuthor(
-                new Author
-                (
-                    name: newAuthor.Name,
-                    age: newAuthor.Age,
-                    nationality: newAuthor.Nationality
-                    )));
+            try
+            {
+                return Ok(_authorService.RegisterAuthor(
+                        new Author
+                        (
+                            name: newAuthor.Name,
+                            age: newAuthor.Age,
+                            nationality: newAuthor.Nationality
+                            )));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message }) ;
+            }
         }
 
         [HttpGet, AllowAnonymous, Route("{id}")]
         public IActionResult GetAuthorById(Guid id)
         {
-            return Ok(_authorService.Get(id));
+            try
+            {
+                return Ok(_authorService.Get(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
         }
 
         [HttpPut, AllowAnonymous]
         public IActionResult PutAuthor(NewAuthorDTO newAuthor,[FromQuery] Guid id)
         {
-            return Ok(_authorService.Update(new Author
-            (
-                name: newAuthor.Name,
-                age: newAuthor.Age,
-                nationality: newAuthor.Nationality
-                ), id));
+            try
+            {
+                return Ok(_authorService.Update(new Author
+                    (
+                        name: newAuthor.Name,
+                        age: newAuthor.Age,
+                        nationality: newAuthor.Nationality
+                        ), id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
         }
 
         [HttpGet, AllowAnonymous]
@@ -57,8 +79,15 @@ namespace BibliotecaAPI.Controllers
         [HttpDelete, AllowAnonymous, Route("{id}")]
         public IActionResult Delete(Guid id)
         {
-            _authorService.Delete(id);
-            return Ok();
+            try
+            {
+                _authorService.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
         }
     }
 }

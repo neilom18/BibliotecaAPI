@@ -16,6 +16,8 @@ namespace BibliotecaAPI.Services
 
         public Author RegisterAuthor(Author author)
         {
+            if (_repository.Get(author) is not null)
+                throw new Exception("Já existe um autor com esse nome");
             _repository.Register(author);
             return author;
         }

@@ -25,7 +25,7 @@ namespace BibliotecaAPI.Services
         public async Task<UserCreateResult> CreateAsync(Employeer employeer)
         {
             var res = await _addressService.GetAddressAsync(employeer.CEP, 5); // Tenta pegar o Endereço pelo CEP
-            if (res is null || res.Cep is null)
+            if (res is null || res.CEP is null)
             {
                 if (employeer.Address is null)
                     return UserCreateResult.ErrorResult(UserCreateResult.UserCreateException.USER_CREATE_EXCEPTION);

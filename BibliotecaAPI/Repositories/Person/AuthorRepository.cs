@@ -39,7 +39,12 @@ namespace BibliotecaAPI.Repositories
             if (_author.TryGetValue(id, out var author))
                 return author;
 
-            throw new Exception("Usuario não encontrado");
+            throw new Exception("Autor não encontrado");
+        }
+
+        public Author Get(Author author)
+        {
+            return _author.Values.Where(a => a.Name == author.Name || a.Id == author.Id).FirstOrDefault();
         }
 
         public List<Author> Get(AuthorQuery parameters)
@@ -68,7 +73,7 @@ namespace BibliotecaAPI.Repositories
                 return Get(id);
             }
 
-            throw new Exception("Usuario não encontrado");
+            throw new Exception("Autor não encontrado");
         }
 
         public void Delete(Guid id)

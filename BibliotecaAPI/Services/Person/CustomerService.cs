@@ -1,4 +1,5 @@
-﻿using BibliotecaAPI.Manager;
+﻿using BibliotecaAPI.DTOs;
+using BibliotecaAPI.Manager;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
 using System.Threading.Tasks;
@@ -23,18 +24,46 @@ namespace BibliotecaAPI.Services
             _addressService = addressService;
         }
 
-        public async Task<UserCreateResult> CreateAsync(Customer customer)
+        public async Task<UserCreateResult> CreateAsync(NewUserDTO data)
         {
-            var res = await _addressService.GetAddressAsync(customer.CEP, 5); // Tenta pegar o Endereço pelo CEP
-            if (res is null || res.Cep is null)
+           
+            var res = await _addressService.GetAddressAsync(data.CEP, 5); // Tenta pegar o Endereço pelo CEP
+            if (res is null || res.CEP is null)
             {
-                if (customer.Address is null)
+                if (data.Address is null)
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
-                res = await _addressService.GetAddressAsync(customer.Address.Cep, 5);
-                if (res is null || res.Cep is null) 
+                res = await _addressService.GetAddressAsync(data.Address.Cep, 5);
+                if (res is null || res.CEP is null) 
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
-            else { customer.SetAddress(res) ; }
+
+            var customer = new Customer
+                (
+                user: new User
+                    (
+                        username: data.Username,
+                        password: data.Password,
+                        document: data.Document,
+                        age: data.Age
+                    ),
+                address: new Address
+                    (
+                        cep: res.CEP,
+                        bairro: res.Bairro,
+                        logradouro: res.Logradouro,
+                        uf: res.Uf,
+                        localidade: res.Localidade,
+                        complemento: res.Complemento
+                    ),
+                document: data.Document
+                ) ;
+
+            customer.Address.Update(
+                data.Address.Logradouro,
+                data.Address.Complemento,
+                data.Address.Bairro,
+                data.Address.Localidade,
+                data.Address.Uf);
 
             var userExist = _usersRepository.GetbyUsername(customer.User.Username);
 

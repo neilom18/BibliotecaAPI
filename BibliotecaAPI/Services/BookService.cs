@@ -20,7 +20,8 @@ namespace BibliotecaAPI.Services
 
         public Book RegisterBook(Book book)
         {
-            _repository.Get(book.Id);
+            if (_repository.Get(book) is not null)
+                throw new Exception("Esse livro ja foi cadastrado");
             var author = _authorRepository.Get(book.AuthorId);
             book.SetAuthorName(author.Name);
             _authorRepository.AddBook(book);

@@ -4,16 +4,14 @@ namespace BibliotecaAPI.Models
 {
     public class Customer
     {
-        public Customer(string document, string cep,User user, Address address)
+        public Customer(string document,User user, Address? address)
         {
             Document = document;
-            CEP = cep;
             Address = address;
             User = user;
         }
 
         public string Document { get; private set; }
-        public string CEP { get; private set; }
         public Address? Address { get; private set; }
         public DateTime CreatedDate { get; private set; }
         public User User { get; private set; }

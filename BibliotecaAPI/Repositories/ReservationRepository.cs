@@ -30,7 +30,7 @@ namespace BibliotecaAPI.Repositories
             if(_reservation.TryGetValue(id, out var reservation))
                 return reservation;
 
-            return null;
+            throw new Exception("Reserva não encontrada");
         }
 
         public IEnumerable<Reserve> GetByCustomerId(Guid id)

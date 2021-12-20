@@ -73,7 +73,7 @@ namespace BibliotecaAPI.Services
                 return new LoginResultDTO
                 {
                     Sucess = false,
-                    Errors = new string[] { $"Ocorreu um erro ao authenticar {loginResult.Exception.Message}" }
+                    Errors = new string[] { $"Ocorreu um erro ao authenticar: {loginResult.Exception.Message}" }
                 };
             }
             var token = _tokenService.GenerateToken(loginResult.User);

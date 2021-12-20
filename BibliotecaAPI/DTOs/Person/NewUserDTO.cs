@@ -7,18 +7,24 @@
         public int Age { get; set; }
         public string Document { get; set; }
         public string CEP { get; set; }
-        public Models.Address Address { get; set; }
+        public AddressDTO? Address { get; set; }
 
         public override void Validar()
         {
             Valido = true;
             CEP = CEP.Replace("-", "");
             CEP = CEP.Trim();
-            if(Username is null || Username.Length < 4) Valido = false;
+            if (string.IsNullOrWhiteSpace(CEP) || CEP.Length != 8) Valido = false;
+            else if (!int.TryParse(CEP, out _)) Valido = false;
+            else if (Username is null || Username.Length < 4) Valido = false;
             else if(Password.Length < 7) Valido = false;
-            else if(CEP is null || CEP.Length != 8) Valido = false;
             else if(Age < 6) Valido = false;
             else if(!int.TryParse(Document, out _)) Valido = false;
+            else if(Address is not null)
+            {
+                Address.Validar();
+                if (!Address.Valido) Valido = false; 
+            }
         }
     }
 

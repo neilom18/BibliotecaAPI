@@ -28,19 +28,8 @@ namespace BibliotecaAPI.Controllers
         {
             newUserDTO.Validar();
             if (!newUserDTO.Valido) return BadRequest();
-            var result = _customerService.CreateAsync(new Customer
-            (
-                user: new User
-                (
-                    username: newUserDTO.Username,
-                    password: newUserDTO.Password,
-                    age: newUserDTO.Age,
-                    document: newUserDTO.Document
-                    ),
-                document: newUserDTO.Document,
-                cep: newUserDTO.CEP,
-                address: newUserDTO.Address
-            )).GetAwaiter().GetResult();
+
+            var result = _customerService.CreateAsync(newUserDTO).GetAwaiter().GetResult();
 
             if (result.Errors)
             {
@@ -62,6 +51,8 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, Authorize(Roles = "admin"), Route("employeer")]
         public IActionResult EmployeerRegister([FromBody] NewUserDTO newUserDTO)
         {
+            newUserDTO.Validar();
+            if (!newUserDTO.Valido) return BadRequest();
             var result = _employeerService.CreateAsync(new Employeer
             (
                 user: new User
@@ -72,8 +63,15 @@ namespace BibliotecaAPI.Controllers
                     document: newUserDTO.Document
                     ),
                 document: newUserDTO.Document,
-                cep: newUserDTO.CEP,
-                address: newUserDTO.Address
+                address: new Address
+                (
+                    cep: newUserDTO.Address.Cep,
+                    logradouro: newUserDTO.Address.Logradouro,
+                    complemento: newUserDTO.Address.Complemento,
+                    bairro: newUserDTO.Address.Bairro,
+                    localidade: newUserDTO.Address.Localidade,
+                    uf: newUserDTO.Address.Uf
+                    )
             )).GetAwaiter().GetResult();
 
             if (result.Errors)
@@ -114,7 +112,7 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpGet, Authorize(Roles = "admin,employeer")]
-        public IActionResult Get(UserQuery parameters)
+        public IActionResult Get([FromQuery]UserQuery parameters)
         {
             return Ok(_userService.Get(parameters));
         }
@@ -122,7 +120,14 @@ namespace BibliotecaAPI.Controllers
         [HttpGet, Authorize(Roles ="admin,employeer"), Route("{id}")]
         public IActionResult Get(Guid id)
         {
-            return Ok(_userService.GetById(id));
+            try
+            {
+                return Ok(_userService.GetById(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ExceptionResult { Sucess = false, Message = ex.Message });
+            }
         }      
 
         [HttpPut, AllowAnonymous, Route("reset_password")]
