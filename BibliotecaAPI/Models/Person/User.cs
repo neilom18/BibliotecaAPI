@@ -36,5 +36,11 @@ namespace BibliotecaAPI.Models
         }
         public void SetRole(string role) => Role = role;
 
+        public void Update(User user)
+        {
+            Username = user.Username;
+            Document = user.Document;
+            Age = user.Age;
+        }
     }
 }

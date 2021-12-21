@@ -124,10 +124,11 @@ namespace BibliotecaAPI.Controllers
             return BadRequest(result);
         }
 
-        /*[HttpPut, Authorize(Roles = "customer,employeer,admin")] Esqueci de implementar vi agora já to terminando!
-        public IActionResult PutUser(NewUserDTO newUser)
+        /*[HttpPut, Authorize(Roles = "customer,employeer,admin"), Route("{id}")]
+        public IActionResult PutUser(NewUserDTO newUser, [FromRoute] Guid id)
         {
-
+            var result = _customerService.UpdateAsync(newUser, id).GetAwaiter().GetResult();
+            return Ok(result);
         }*/
     }
 }

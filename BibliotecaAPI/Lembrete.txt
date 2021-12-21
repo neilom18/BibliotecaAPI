@@ -2,3 +2,4 @@
 	Implementar o repositório genérico
 	Melhorar as buscas
 	Rever a lógica do Endereço
+	Dividir o UserController em -> UserController, CustomerController, EmployeerController

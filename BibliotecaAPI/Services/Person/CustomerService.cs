@@ -131,7 +131,10 @@ namespace BibliotecaAPI.Services
 
             _clientsRepository.Update(customer, id);
 
-            return null;
+            _usersRepository.Update(customer.User, id);
+
+            return UserCreateResult.SucessResult(customer.User);
+           
         }
     }
 }
