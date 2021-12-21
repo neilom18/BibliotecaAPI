@@ -86,7 +86,7 @@ namespace BibliotecaAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet, Authorize(Roles = "customer,admin,employee"),Route("current_user")]
+        [HttpGet, Authorize(Roles = "customer"),Route("current_user")]
         public IActionResult GetCurrentUser()
         {
             return Ok(_userService.GetCurrentUser(User.Identity.Name));
@@ -123,5 +123,11 @@ namespace BibliotecaAPI.Controllers
             }
             return BadRequest(result);
         }
+
+        /*[HttpPut, Authorize(Roles = "customer,employeer,admin")] Esqueci de implementar vi agora já to terminando!
+        public IActionResult PutUser(NewUserDTO newUser)
+        {
+
+        }*/
     }
 }

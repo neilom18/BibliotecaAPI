@@ -35,5 +35,6 @@ namespace BibliotecaAPI.Models
             FailedAttempts = 0;
         }
         public void SetRole(string role) => Role = role;
+
     }
 }

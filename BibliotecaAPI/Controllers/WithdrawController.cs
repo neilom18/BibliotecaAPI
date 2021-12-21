@@ -22,7 +22,7 @@ namespace BibliotecaAPI.Controllers
             _bookService = bookService;
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost, Authorize(Roles = "customer")]
         public IActionResult PostWithdraw(WithdrawDTO withdrawDTO)
         {
             Withdraw with;
@@ -48,20 +48,20 @@ namespace BibliotecaAPI.Controllers
             return Ok(_withdrawService.RegisterWithdraw(with));
         }
 
-        [HttpGet, AllowAnonymous, Route("current_user")]
+        [HttpGet, Authorize(Roles = "customer"), Route("current_user")]
         public IActionResult Get()
         {
             var id = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value);
             return Ok(_withdrawService.GetWithdrawByCustomerId(id));
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet, Authorize(Roles = "admin,employeer")]
         public IActionResult Get([FromQuery]WithdrawQuery parameters)
         {
             return Ok(_withdrawService.GetWithdraw(parameters));
         }
 
-        [HttpPost, AllowAnonymous, Route("finalize/{id}")]
+        [HttpPost, Authorize(Roles = "customer"), Route("finalize/{id}")]
         public IActionResult Finalize(Guid id)
         {
             return Ok(_withdrawService.FinalizeWithdraw(id));

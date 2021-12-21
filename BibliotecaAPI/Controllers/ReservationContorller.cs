@@ -19,7 +19,7 @@ namespace BibliotecaAPI.Controllers
             _reservation = reservation;
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost, Authorize]
         public IActionResult PostReserve(ReserveDTO reserve) 
         {
             reserve.Validar();
@@ -39,7 +39,7 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous, Route("current_user")]
+        [HttpGet, Authorize, Route("current_user")]
         public IActionResult GetReserverOfCurrentUser()
         {
             var id = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value);
@@ -54,13 +54,13 @@ namespace BibliotecaAPI.Controllers
             // User.FindFirst(ClaimTypes.Sid) Achar o Id
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet, Authorize(Roles = "admin,employeer")]
         public IActionResult Get([FromQuery]ReserveQuery parameters)
         {
             return Ok(_reservation.GetReserves(parameters));
         }
 
-        [HttpPost, AllowAnonymous, Route("cancel/{id}")]
+        [HttpPost, Authorize, Route("cancel/{id}")]
         public IActionResult CancelReserve(Guid id)
         {
             try
@@ -75,7 +75,7 @@ namespace BibliotecaAPI.Controllers
            
         }
 
-        [HttpPut, AllowAnonymous, Route("{id}")]
+        [HttpPut, Authorize, Route("{id}")]
         public IActionResult PutReserves(ReserveDTO reserve, Guid id)
         {
             reserve.Validar();
@@ -94,7 +94,7 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpPost, AllowAnonymous, Route("finalize/{id}")]
+        [HttpPost, Authorize, Route("finalize/{id}")]
         public IActionResult Finalize(Guid id)
         {
             return Ok(_reservation.Finalize(id));

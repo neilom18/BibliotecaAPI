@@ -19,7 +19,7 @@ namespace BibliotecaAPI.Controllers
             _bookService = bookService;
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost, Authorize(Roles = "admin,employeer")]
         public IActionResult PostBook(BookDTO bookDTO)
         {
             bookDTO.Validar();
@@ -43,7 +43,7 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous, Route("{id}")]
+        [HttpGet, Authorize, Route("{id}")]
         public IActionResult GetBook(Guid id)
         {
             try
@@ -56,13 +56,13 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet, Authorize]
         public IActionResult GetBook([FromQuery]BookQuery parameters)
         {
             return Ok(_bookService.GetBooks(parameters));
         }
 
-        [HttpPut, AllowAnonymous]
+        [HttpPut, Authorize(Roles = "admin,employeer")]
         public IActionResult PutBook(BookUpdateDTO bookDTO,Guid id)
         {
             bookDTO.Validar();
@@ -78,7 +78,7 @@ namespace BibliotecaAPI.Controllers
                     ), id));
         }
 
-        [HttpDelete, AllowAnonymous, Route("{id}")]
+        [HttpDelete, Authorize(Roles = "admin,employeer"), Route("{id}")]
         public IActionResult DeleteBook(Guid id) 
         {
             try

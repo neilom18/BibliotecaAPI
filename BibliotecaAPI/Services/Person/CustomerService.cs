@@ -2,6 +2,7 @@
 using BibliotecaAPI.Manager;
 using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
+using System;
 using System.Threading.Tasks;
 
 namespace BibliotecaAPI.Services
@@ -26,14 +27,14 @@ namespace BibliotecaAPI.Services
 
         public async Task<UserCreateResult> CreateAsync(NewUserDTO data)
         {
-           
+
             var res = await _addressService.GetAddressAsync(data.CEP, 5); // Tenta pegar o Endereço pelo CEP
             if (res is null || res.CEP is null)
             {
                 if (data.Address is null)
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
                 res = await _addressService.GetAddressAsync(data.Address.CEP, 5);
-                if (res is null || res.CEP is null) 
+                if (res is null || res.CEP is null)
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
 
@@ -56,7 +57,7 @@ namespace BibliotecaAPI.Services
                         complemento: res.Complemento
                     ),
                 document: data.Document
-                ) ;
+                );
 
             customer.Address.Update(
                 data.Address.Logradouro,
@@ -80,5 +81,57 @@ namespace BibliotecaAPI.Services
             return UserCreateResult.SucessResult(newUser);
         }
 
+        public async Task<UserCreateResult> UpdateAsync(NewUserDTO data, Guid id)
+        {
+
+            var res = await _addressService.GetAddressAsync(data.CEP, 5); // Tenta pegar o Endereço pelo CEP
+            if (res is null || res.CEP is null)
+            {
+                if (data.Address is null)
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
+                res = await _addressService.GetAddressAsync(data.Address.CEP, 5);
+                if (res is null || res.CEP is null)
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
+            }
+
+            var customer = new Customer
+                (
+                user: new User
+                    (
+                        username: data.Username,
+                        password: data.Password,
+                        document: data.Document,
+                        age: data.Age
+                    ),
+                address: new Address
+                    (
+                        cep: res.CEP,
+                        bairro: res.Bairro,
+                        logradouro: res.Logradouro,
+                        uf: res.Uf,
+                        localidade: res.Localidade,
+                        complemento: res.Complemento
+                    ),
+                document: data.Document
+                );
+
+            customer.Address.Update(
+                data.Address.Logradouro,
+                data.Address.Complemento,
+                data.Address.Bairro,
+                data.Address.Localidade,
+                data.Address.Uf,
+                data.Address.Numero);
+
+            var userExist = _usersRepository.GetbyUsername(customer.User.Username);
+
+
+            if (userExist != null)
+                return UserCreateResult.ErrorResult(UserCreateResult.UsernameUsedExcpetion.USERNAME_USED_EXCEPTION);
+
+            _clientsRepository.Update(customer, id);
+
+            return null;
+        }
     }
 }

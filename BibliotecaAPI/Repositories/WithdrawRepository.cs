@@ -111,7 +111,7 @@ namespace BibliotecaAPI.Repositories
         {
             var w = GetStartedByReserveId(id);
             if (_withdraw.TryGetValue(w.Id, out var withdraw))
-                withdraw.UpdateDate(reserve.StartDate, reserve.EndDate);
+                withdraw.UpdateDate(reserve.StartDate, reserve.EndDate, reserve.Book) ;
             else
             {
                 throw new Exception("Não foi possível encontrar a reserva");

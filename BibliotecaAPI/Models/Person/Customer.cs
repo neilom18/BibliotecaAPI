@@ -19,5 +19,12 @@ namespace BibliotecaAPI.Models
         public void SetCreatedDate(DateTime date) => CreatedDate = date;
         public void SetAddress(Address address) => Address = address;
         public void SetRole() => User.SetRole("customer");
+
+        public void Update(Customer customer)
+        {
+            Document = customer.Document;
+            Address = customer.Address;
+            User = customer.User;
+        }
     }
 }

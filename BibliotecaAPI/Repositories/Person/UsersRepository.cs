@@ -51,6 +51,14 @@ namespace BibliotecaAPI.Repositories
             throw new Exception("Não foi possivel cadastrar");
         }
 
+        /*public User Update(User user, Guid id)
+        {
+            if(_users.TryGetValue(id, out var userToUpdate))
+            {
+                userToUpdate
+            }
+        }*/
+
         public bool Remove(Guid id)
         {
             return _users.Remove(id);

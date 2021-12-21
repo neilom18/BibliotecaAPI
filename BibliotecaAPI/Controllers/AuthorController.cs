@@ -18,7 +18,7 @@ namespace BibliotecaAPI.Controllers
             _authorService = authorService;
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost,Authorize(Roles = "admin,employeer")]
         public IActionResult PostAuthor(NewAuthorDTO newAuthor)
         {
             newAuthor.Validar();
@@ -39,7 +39,7 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous, Route("{id}")]
+        [HttpGet, Authorize, Route("{id}")]
         public IActionResult GetAuthorById(Guid id)
         {
             try
@@ -52,7 +52,7 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpPut, AllowAnonymous]
+        [HttpPut, Authorize(Roles = "admin,employeer")]
         public IActionResult PutAuthor(NewAuthorDTO newAuthor,[FromQuery] Guid id)
         {
             newAuthor.Validar();
@@ -72,13 +72,13 @@ namespace BibliotecaAPI.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous]
+        [HttpGet, Authorize]
         public IActionResult Get([FromQuery] AuthorQuery parameters) 
         {
             return Ok(_authorService.Get(parameters));
         }
 
-        [HttpDelete, AllowAnonymous, Route("{id}")]
+        [HttpDelete, Authorize(Roles = "admin,employeer"), Route("{id}")]
         public IActionResult Delete(Guid id)
         {
             try
