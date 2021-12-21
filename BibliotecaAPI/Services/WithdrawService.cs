@@ -22,12 +22,23 @@ namespace BibliotecaAPI.Services
             if (withdraw.ReservedId is null)
             {
                 var available = VerifyAvailability(withdraw);
-                if (available.Available)
-                    return _repository.Register(withdraw);
+                if (available.Available) {
+                    var reserve = new Reserve
+                    (
+                        startDate: withdraw.StartDate,
+                        endDate: withdraw.EndDate,
+                        customerId: withdraw.CustomerId,
+                        status: Enums.EStatus.Ongoing,
+                        book: withdraw.Book
+                        );
+                    _reserveRepository.Register(reserve);
+                    withdraw.SetReservedId(reserve.Id);
+                    return _repository.Register(withdraw); 
+                }
                 throw new Exception($"O livro {available.Title} não está disponível");
             }
-
-            return _repository.Register(withdraw);
+            withdraw.SetStatus(Enums.EStatus.Ongoing);
+            return withdraw;
         }
 
         public Availability VerifyAvailability(Withdraw withdraw)
@@ -49,7 +60,8 @@ namespace BibliotecaAPI.Services
 
         public Withdraw GetReserve(Guid id) 
         {
-            return _repository.GetStarted(id);
+
+            return _repository.GetStartedByReserveId(id);
         }
 
         public IEnumerable<Withdraw> GetWithdraw(WithdrawQuery parameters)
@@ -57,15 +69,19 @@ namespace BibliotecaAPI.Services
             return _repository.Get(parameters);
         }
 
-        public Withdraw GetWithdrawById(Guid id)
+        public IEnumerable<Withdraw> GetWithdrawByCustomerId(Guid id)
         {
-            return _repository.GetStarted(id);
+            return _repository.GetOngoingByCustomer(id);
         }
 
         public Withdraw FinalizeWithdraw(Guid id)
         {
-            _reserveRepository.Finalize(id);
-            return _repository.Finalize(id);
+            var w = _repository.GetOngoingById(id);
+            if (w is null)
+                throw new Exception("Essa reserva foi cancelada ou não foi iniciada");
+            
+            _reserveRepository.Finalize(w.ReservedId.Value);
+            return _repository.Finalize(w.Id);
         }
     }
 }

@@ -23,13 +23,13 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PostReserve(ReserveDTO reserve) 
         {
             reserve.Validar();
-            if (!reserve.Valido) return BadRequest();
+            if (!reserve.Valido) return BadRequest(reserve.GetErrors());
             try
             {
                 return Ok(_reservation.RegisterReserve(new Reserve
                         (
-                            startDate: reserve.StartDate,
-                            endDate: reserve.EndDate,
+                            startDate: reserve.StartDate.Date,
+                            endDate: reserve.EndDate.Date,
                             customerId: Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value)
                         ), reserve.BookId));
             }
@@ -78,13 +78,15 @@ namespace BibliotecaAPI.Controllers
         [HttpPut, AllowAnonymous, Route("{id}")]
         public IActionResult PutReserves(ReserveDTO reserve, Guid id)
         {
+            reserve.Validar();
+            if (!reserve.Valido) return BadRequest(reserve.GetErrors());
             try
             {
                 return Ok(_reservation.Update(new Reserve
                         (
                             reserve.StartDate,
                             reserve.EndDate
-                        ), reserve.BookId));
+                        ), reserve.BookId, id));
             }
             catch (Exception ex)
             {

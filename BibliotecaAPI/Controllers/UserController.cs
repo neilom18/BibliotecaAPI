@@ -52,27 +52,8 @@ namespace BibliotecaAPI.Controllers
         public IActionResult EmployeerRegister([FromBody] NewUserDTO newUserDTO)
         {
             newUserDTO.Validar();
-            if (!newUserDTO.Valido) return BadRequest();
-            var result = _employeerService.CreateAsync(new Employeer
-            (
-                user: new User
-                (
-                    username: newUserDTO.Username,
-                    password: newUserDTO.Password,
-                    age: newUserDTO.Age,
-                    document: newUserDTO.Document
-                    ),
-                document: newUserDTO.Document,
-                address: new Address
-                (
-                    cep: newUserDTO.Address.Cep,
-                    logradouro: newUserDTO.Address.Logradouro,
-                    complemento: newUserDTO.Address.Complemento,
-                    bairro: newUserDTO.Address.Bairro,
-                    localidade: newUserDTO.Address.Localidade,
-                    uf: newUserDTO.Address.Uf
-                    )
-            )).GetAwaiter().GetResult();
+            if (!newUserDTO.Valido) return BadRequest(newUserDTO.GetErrors());
+            var result = _employeerService.CreateAsync(newUserDTO).GetAwaiter().GetResult();
 
             if (result.Errors)
             {
@@ -96,7 +77,7 @@ namespace BibliotecaAPI.Controllers
         public IActionResult Login(UserLoginDTO userLogin)
         {
             userLogin.Validar();
-            if (!userLogin.Valido) return BadRequest();
+            if (!userLogin.Valido) return BadRequest(userLogin.GetErrors());
             var result = _userService.Login(userLogin.Username, userLogin.Password);
             if (result.Sucess == true)
             {
@@ -134,7 +115,7 @@ namespace BibliotecaAPI.Controllers
         public IActionResult ResetPassword(ResetPasswordDTO resetPassword)
         {
             resetPassword.Validar();
-            if (!resetPassword.Valido) return BadRequest();
+            if (!resetPassword.Valido) return BadRequest(resetPassword.GetErrors());
             var result = _userService.ResetPassword(resetPassword);
             if(result.Sucess == true)
             {

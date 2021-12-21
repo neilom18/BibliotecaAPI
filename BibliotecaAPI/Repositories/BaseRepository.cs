@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace BibliotecaAPI.Repositories
 {
+    //
+    //Ainda não implementado.
+    //
     public class BaseRepository<TKey, TEntity> where TEntity : BaseEntity<TKey> where TKey : notnull
     {
         protected Dictionary<TKey, TEntity> _store;

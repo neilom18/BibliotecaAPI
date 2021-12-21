@@ -1,11 +1,4 @@
 ﻿
-	
-	// --- //
-	-----> Implementar as Exceptions. <----------
-
-	Fazer as validações
-	^^^^^^^^^^^^^^^^^^^
-	|||||||||||||||||||
-	|||||||||||||||||||
-	|||||||||||||||||||
-	|||||||||||||||||||
+	Implementar o repositório genérico
+	Melhorar as buscas
+	Rever a lógica do Endereço

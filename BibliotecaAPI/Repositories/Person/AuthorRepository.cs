@@ -58,7 +58,7 @@ namespace BibliotecaAPI.Repositories
             if(parameters.Nationality != null)
                 authorFiltered = authorFiltered.Where(a => a.Nationality == parameters.Nationality);*/
 
-            authorFiltered.WhereIf(parameters.Name, x => x.Name == parameters.Name)
+            authorFiltered = authorFiltered.WhereIf(parameters.Name, x => x.Name == parameters.Name)
                 .WhereIf(parameters.Age, x => x.Age == parameters.Age)
                 .WhereIf(parameters.Nationality, x => x.Nationality == parameters.Nationality);
             

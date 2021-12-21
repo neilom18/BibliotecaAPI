@@ -23,7 +23,7 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PostBook(BookDTO bookDTO)
         {
             bookDTO.Validar();
-            if (!bookDTO.Valido) return BadRequest();
+            if (!bookDTO.Valido) return BadRequest(bookDTO.GetErrors());
             try
             {
                 return Ok(_bookService.RegisterBook(new Book
@@ -63,10 +63,10 @@ namespace BibliotecaAPI.Controllers
         }
 
         [HttpPut, AllowAnonymous]
-        public IActionResult PutBook(BookDTO bookDTO,Guid id)
+        public IActionResult PutBook(BookUpdateDTO bookDTO,Guid id)
         {
             bookDTO.Validar();
-            if(!bookDTO.Valido) return BadRequest();
+            if(!bookDTO.Valido) return BadRequest(bookDTO.GetErrors());
             return Ok(_bookService.UpdateBook(new Book
                 (
                     title: bookDTO.Title,

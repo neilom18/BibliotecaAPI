@@ -32,7 +32,7 @@ namespace BibliotecaAPI.Services
             {
                 if (data.Address is null)
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
-                res = await _addressService.GetAddressAsync(data.Address.Cep, 5);
+                res = await _addressService.GetAddressAsync(data.Address.CEP, 5);
                 if (res is null || res.CEP is null) 
                     return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
@@ -63,7 +63,8 @@ namespace BibliotecaAPI.Services
                 data.Address.Complemento,
                 data.Address.Bairro,
                 data.Address.Localidade,
-                data.Address.Uf);
+                data.Address.Uf,
+                data.Address.Numero);
 
             var userExist = _usersRepository.GetbyUsername(customer.User.Username);
 

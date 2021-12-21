@@ -22,7 +22,7 @@ namespace BibliotecaAPI.Controllers
         public IActionResult PostAuthor(NewAuthorDTO newAuthor)
         {
             newAuthor.Validar();
-            if (!newAuthor.Valido) return BadRequest();
+            if (!newAuthor.Valido) return BadRequest(newAuthor.GetErrors());
             try
             {
                 return Ok(_authorService.RegisterAuthor(
@@ -55,6 +55,8 @@ namespace BibliotecaAPI.Controllers
         [HttpPut, AllowAnonymous]
         public IActionResult PutAuthor(NewAuthorDTO newAuthor,[FromQuery] Guid id)
         {
+            newAuthor.Validar();
+            if (!newAuthor.Valido) return BadRequest(newAuthor.GetErrors());
             try
             {
                 return Ok(_authorService.Update(new Author

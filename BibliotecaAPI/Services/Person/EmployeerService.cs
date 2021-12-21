@@ -1,4 +1,5 @@
-﻿using BibliotecaAPI.Models;
+﻿using BibliotecaAPI.DTOs;
+using BibliotecaAPI.Models;
 using BibliotecaAPI.Repositories;
 using System.Threading.Tasks;
 
@@ -22,15 +23,46 @@ namespace BibliotecaAPI.Services
             _addressService = addressService;
         }
 
-        public async Task<UserCreateResult> CreateAsync(Employeer employeer)
+        public async Task<UserCreateResult> CreateAsync(NewUserDTO data)
         {
-            var res = await _addressService.GetAddressAsync(employeer.CEP, 5); // Tenta pegar o Endereço pelo CEP
+            var res = await _addressService.GetAddressAsync(data.CEP, 5); // Tenta pegar o Endereço pelo CEP
             if (res is null || res.CEP is null)
             {
-                if (employeer.Address is null)
-                    return UserCreateResult.ErrorResult(UserCreateResult.UserCreateException.USER_CREATE_EXCEPTION);
+                if (data.Address is null)
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
+                res = await _addressService.GetAddressAsync(data.Address.CEP, 5);
+                if (res is null || res.CEP is null)
+                    return UserCreateResult.ErrorResult(UserCreateResult.UserAddressExcpetion.USER_ADDRESS_EXCEPTION);
             }
-            else { employeer.SetAddress(res); }
+
+            var employeer = new Employeer
+                (
+                user: new User
+                    (
+                        username: data.Username,
+                        password: data.Password,
+                        document: data.Document,
+                        age: data.Age
+                    ),
+                address: new Address
+                    (
+                        cep: res.CEP,
+                        bairro: res.Bairro,
+                        logradouro: res.Logradouro,
+                        uf: res.Uf,
+                        localidade: res.Localidade,
+                        complemento: res.Complemento
+                    ),
+                document: data.Document
+                );
+
+            employeer.Address.Update(
+                data.Address.Logradouro,
+                data.Address.Complemento,
+                data.Address.Bairro,
+                data.Address.Localidade,
+                data.Address.Uf,
+                data.Address.Numero);
 
             var userExist = _usersRepository.GetbyUsername(employeer.User.Username);
 

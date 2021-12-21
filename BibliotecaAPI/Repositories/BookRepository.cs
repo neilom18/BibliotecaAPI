@@ -56,7 +56,7 @@ namespace BibliotecaAPI.Repositories
             if(parameters.ReleaseYear != null)
                 bookFiltered = bookFiltered.Where(b => b.ReleaseYear == parameters.ReleaseYear);*/
 
-            bookFiltered.WhereIf(parameters.AuthorName, x => x.AuthorName == parameters.AuthorName)
+            bookFiltered = bookFiltered.WhereIf(parameters.AuthorName, x => x.AuthorName == parameters.AuthorName)
                 .WhereIf(parameters.Title, x => x.Title == parameters.Title)
                 .WhereIf(parameters.Description, x => x.Description == parameters.Description)
                 .WhereIf(parameters.ReleaseYear, x => x.ReleaseYear == parameters.ReleaseYear);

@@ -8,7 +8,7 @@ namespace BibliotecaAPI.ExtensionsMethod
     {
         public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> list, object para, Func<T, bool> predicate )
         {
-            if (para == null) return list;
+            if (para is null) return list;
             return list.Where(predicate);
         }
 

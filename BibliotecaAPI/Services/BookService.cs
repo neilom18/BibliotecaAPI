@@ -46,6 +46,8 @@ namespace BibliotecaAPI.Services
 
         public Book UpdateBook(Book book, Guid id) 
         {
+            if (_repository.Get(book) is not null)
+                throw new Exception("Esse livro já foi cadastrado");
             return _repository.Update(book, id);
         }
 

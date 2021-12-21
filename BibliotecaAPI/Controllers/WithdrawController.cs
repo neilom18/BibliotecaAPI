@@ -25,8 +25,6 @@ namespace BibliotecaAPI.Controllers
         [HttpPost, AllowAnonymous]
         public IActionResult PostWithdraw(WithdrawDTO withdrawDTO)
         {
-            withdrawDTO.Validar();
-            if (!withdrawDTO.Valido) return BadRequest();
             Withdraw with;
             if (withdrawDTO.ReserveId != null)
             {
@@ -35,6 +33,8 @@ namespace BibliotecaAPI.Controllers
             }
             else
             {
+                withdrawDTO.Validar();
+                if (!withdrawDTO.Valido) return BadRequest(withdrawDTO.GetErrors());
                 _bookService.GetBooks(withdrawDTO.Book);
                 with = new Withdraw
                     (
@@ -52,7 +52,7 @@ namespace BibliotecaAPI.Controllers
         public IActionResult Get()
         {
             var id = Guid.Parse(User.FindFirst(ClaimTypes.Sid).Value);
-            return Ok(_withdrawService.GetWithdrawById(id));
+            return Ok(_withdrawService.GetWithdrawByCustomerId(id));
         }
 
         [HttpGet, AllowAnonymous]

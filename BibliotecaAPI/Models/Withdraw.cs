@@ -31,5 +31,13 @@ namespace BibliotecaAPI.Models
         public List<Book> Book { get; private set; }
 
         public void SetStatus(EStatus status) => Status = status;
+        public void SetReservedId(Guid id) => ReservedId = id;
+
+        public void UpdateDate(DateTime startDate, DateTime endDate, List<Book> books)
+        {
+            StartDate = startDate.Date;
+            EndDate = endDate.Date;
+            Book = books;
+        }
     }
 }

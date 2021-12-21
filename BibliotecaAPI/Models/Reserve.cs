@@ -30,6 +30,15 @@ namespace BibliotecaAPI.Models
             EndDate = endDate;
         }
 
+        public Reserve(DateTime startDate, DateTime endDate, Guid customerId, EStatus status, List<Book> book)
+        {
+            StartDate = startDate;
+            EndDate = endDate;
+            CustomerId = customerId;
+            Status = status;
+            Book = book;
+        }
+
         public void SetBook(List<Book> books) => Book = books;
         public void SetStartDate(DateTime startDate) => StartDate = startDate;
         public void SetEndDate(DateTime endDate) => EndDate = endDate;

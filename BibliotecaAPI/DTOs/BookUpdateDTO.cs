@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BibliotecaAPI.DTOs
 {
-    public class BookDTO : Validator
+    public class BookUpdateDTO : Validator
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public Guid AuthorId { get; set; }
         public int ReleaseYear { get; set; }
         public int AmountCopies { get; set; }
         public uint PageNumber { get; set; }
@@ -20,7 +18,7 @@ namespace BibliotecaAPI.DTOs
         public override void Validar()
         {
             Valido = true;
-            if(AmountCopies <= 0)
+            if (AmountCopies <= 0)
             {
                 _errors.Add(nameof(AmountCopies), "Numero de cópias tem que ser maior que 0.");
                 Valido = false;
@@ -50,10 +48,11 @@ namespace BibliotecaAPI.DTOs
                 Valido = false;
             }
 
-            if(ReleaseYear > DateTime.Today.Year)
+            if (ReleaseYear > System.DateTime.Today.Year)
             {
                 _errors.Add(nameof(ReleaseYear), "Não pode cadastrar um livro com a data de lançamento nos próximos anos");
             }
         }
     }
 }
+

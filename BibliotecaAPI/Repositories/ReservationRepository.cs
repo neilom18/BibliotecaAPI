@@ -22,7 +22,7 @@ namespace BibliotecaAPI.Repositories
             if(_reservation.TryAdd(reservation.Id, reservation))
                 return reservation;
 
-            throw new Exception("Não foi possível adicionar esse livro!");
+            throw new Exception("Não foi possível cadastrar essa reserva");
         }
 
         public Reserve Get(Guid id)
@@ -70,9 +70,9 @@ namespace BibliotecaAPI.Repositories
             return false;
         }
 
-        public Reserve Update(Reserve reserve)
+        public Reserve Update(Reserve reserve, Guid id)
         {
-            if (_reservation.TryGetValue(reserve.Id, out var reserveToUpdate))
+            if (_reservation.TryGetValue(id, out var reserveToUpdate))
             {
                 reserveToUpdate.SetStartDate(reserve.StartDate);
                 reserveToUpdate.SetEndDate(reserve.EndDate);
@@ -80,7 +80,7 @@ namespace BibliotecaAPI.Repositories
 
                 return reserveToUpdate;
             }
-            throw new Exception("O livro informado não foi encontrado");
+            throw new Exception("Não foi possível encontrar a reserva");
         }
 
         public Reserve Finalize(Guid id) 
@@ -90,7 +90,7 @@ namespace BibliotecaAPI.Repositories
                 reserve.SetStatus(EStatus.Finalized);
                 return reserve;
             }
-            throw new Exception("O livro informado não foi encontrado");
+            throw new Exception("Não foi possível encontrar a reserva");
         }
 
         public int NumberOfReserversInDate(DateTime dateStart,DateTime dateEnd, Guid bookId)

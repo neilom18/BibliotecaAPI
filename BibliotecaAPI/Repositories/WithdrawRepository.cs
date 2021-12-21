@@ -37,7 +37,7 @@ namespace BibliotecaAPI.Repositories
                     reservedId: reserve.Id,
                     customerId: reserve.CustomerId
                 );
-            with.SetStatus(EStatus.Ongoing);
+            with.SetStatus(EStatus.Started);
 
             if (!_withdraw.TryAdd(with.Id, with))
                 throw new Exception();
@@ -56,7 +56,7 @@ namespace BibliotecaAPI.Repositories
         {
             IEnumerable<Withdraw> withdrawFiltered = _withdraw.Values;
 
-            withdrawFiltered.WhereIf(parameters.Status, x => x.Status == parameters.Status)
+            withdrawFiltered = withdrawFiltered.WhereIf(parameters.Status, x => x.Status == parameters.Status)
                 .WhereIf(parameters.StartDate, x => x.StartDate == parameters.StartDate)
                 .WhereIf(parameters.EndDate, x => x.EndDate == parameters.EndDate)
                 .WhereIf(parameters.AuthorId, x => x.Book.Any(b => b.AuthorId == parameters.AuthorId))
@@ -65,13 +65,24 @@ namespace BibliotecaAPI.Repositories
             return withdrawFiltered.Paginaze(parameters.Page, parameters.Size);
         }
 
-        public Withdraw GetStarted(Guid id)
+
+        public Withdraw GetStartedByReserveId(Guid id)
         {
-            return _withdraw.Values.Where(w => w.Status == EStatus.Started && w.ReservedId == id).SingleOrDefault();
+            return _withdraw.Values.Where(w => w.Status == EStatus.Started && w.ReservedId == id).FirstOrDefault();
         }
-        public Withdraw GetOngoing(Guid id)
+
+        public Withdraw GetOngoingById(Guid id)
         {
-            return _withdraw.Values.Where(w => w.Status == EStatus.Ongoing && w.CustomerId == id).FirstOrDefault();
+            return _withdraw.Values.Where(w => w.Status == EStatus.Ongoing && w.Id == id).FirstOrDefault();
+        }
+        public IEnumerable<Withdraw> GetOngoingByCustomer(Guid id)
+        {
+            return _withdraw.Values.Where(w => w.Status == EStatus.Ongoing && w.CustomerId == id);
+        }
+
+        public Withdraw GetOngoingByReserveId(Guid id)
+        {
+            return _withdraw.Values.Where(w => w.Status == EStatus.Ongoing && w.ReservedId == id).FirstOrDefault();
         }
 
         public Withdraw Finalize(Guid id)
@@ -83,6 +94,28 @@ namespace BibliotecaAPI.Repositories
             }
 
             throw new Exception();
+        }
+
+        public Withdraw Cancel(Guid id)
+        {
+            if (_withdraw.TryGetValue(id, out var withdraw))
+            {
+                withdraw.SetStatus(EStatus.Canceled);
+                return withdraw;
+            }
+
+            throw new Exception();
+        }
+
+        public void Update(Reserve reserve, Guid id)
+        {
+            var w = GetStartedByReserveId(id);
+            if (_withdraw.TryGetValue(w.Id, out var withdraw))
+                withdraw.UpdateDate(reserve.StartDate, reserve.EndDate);
+            else
+            {
+                throw new Exception("Não foi possível encontrar a reserva");
+            }
         }
     }
 }
